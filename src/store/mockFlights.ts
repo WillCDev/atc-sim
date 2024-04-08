@@ -1,0 +1,47 @@
+export const mockDepartures: FlightStripData[] = [
+  {
+    type: 'departure',
+    callsign: 'AFR1669',
+    departureTime: null,
+    touchdownTime: null,
+    classification: 'H/A332/SP',
+    squawk: '6641',
+    holdingPoint: null,
+    qnh: '1014',
+    destination: 'QMAA',
+    origin: 'OEJN',
+    sid: 'DESIG 1S',
+    isTransfered: false,
+  },
+  {
+    type: 'departure',
+    callsign: 'QTR041',
+    departureTime: null,
+    touchdownTime: null,
+    classification: 'H/A332/SP',
+    squawk: '6641',
+    holdingPoint: null,
+    qnh: '1014',
+    destination: 'QMAA',
+    origin: 'OEJN',
+    sid: 'DESIG 1S',
+    isTransfered: false,
+  },
+]
+
+export const mockArrivals: FlightStripData[] = [
+  {
+    type: 'arrival',
+    callsign: 'SVA123',
+    departureTime: null,
+    touchdownTime: '0730',
+    classification: 'H/B772/SP',
+    squawk: '7111',
+    holdingPoint: null,
+    qnh: '1014',
+    destination: 'QMAA',
+    origin: 'OEJN',
+    sid: null,
+    isTransfered: false,
+  },
+]

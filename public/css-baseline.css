@@ -1,0 +1,17 @@
+body {
+    font-family: 'Lato', sans-serif;
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.08);
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.26);
+}
