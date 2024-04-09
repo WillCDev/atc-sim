@@ -7,6 +7,7 @@ export interface StripBayProps {
   strips: FlightStripData[]
   allowedStripTypes: Array<FlightStripData['type']>
   canTransferDepartures?: boolean
+  canTransferArrivals?: boolean
   canTimestamp?: boolean
   location: FlightStripLocation
   children: React.ReactNode
@@ -17,6 +18,7 @@ export const StripBay: FC<StripBayProps> = ({
   children,
   allowedStripTypes,
   canTransferDepartures,
+  canTransferArrivals,
   canTimestamp,
   location,
 }) => {
@@ -52,6 +54,7 @@ export const StripBay: FC<StripBayProps> = ({
             key={strip.callsign}
             data={strip}
             canTransferDepartures={!!canTransferDepartures}
+            canTransferArrivals={!!canTransferArrivals}
             canTimestamp={!!canTimestamp}
             location={location}
           />

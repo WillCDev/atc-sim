@@ -17,7 +17,7 @@ declare interface FlightStripData extends FlightStripControlProps {
   type: 'arrival' | 'departure'
   callsign: string // Set at begining of SIM
   departureTime: string | null // ONLY When in Runway bay, user selects SID, which timestamps. else timestamp auto applied when moved to Airborne Deps
-  touchdownTime: string | null // ??
+  arrivalTime: string | null // ??
   classification: string | null // Set at begining of SIM
   squawk: string | null // Set at begining of SIM
   // atis: 'I' // Hard Coded

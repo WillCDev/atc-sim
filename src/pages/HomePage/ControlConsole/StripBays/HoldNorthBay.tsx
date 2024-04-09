@@ -12,6 +12,7 @@ export const HoldNorthBay: FC = () => {
       allowedStripTypes={['arrival', 'departure']}
       strips={strips}
       location={FlightStripLocation.HOLD_N}
+      canTransferArrivals={true}
     >
       <InfoStrip
         items={[

@@ -12,6 +12,7 @@ export const Runway1Bay: FC = () => {
       canTimestamp
       strips={strips}
       location={FlightStripLocation.RUNWAY_1}
+      canTransferArrivals
     >
       <InfoStrip
         items={[

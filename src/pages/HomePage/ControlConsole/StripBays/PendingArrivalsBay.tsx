@@ -9,7 +9,7 @@ export const PendingArrivalsBay: FC = () => {
   return (
     <StripBay
       strips={strips}
-      allowedStripTypes={[]}
+      allowedStripTypes={['arrival']}
       location={FlightStripLocation.PENDING_ARRIVALS}
     >
       <InfoStrip

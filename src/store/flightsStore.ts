@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { mockDepartures } from './mockFlights'
+import { mockArrivals, mockDepartures } from './mockFlights'
 import { move } from 'move-position'
 import { format } from 'date-fns'
 
@@ -14,6 +14,11 @@ export enum FlightStripLocation {
   UNASSIGNED = 'UNASSIGNED',
 }
 
+interface Identifier {
+  callsign: string
+  location: FlightStripLocation
+}
+
 interface FlightsState {
   flights: Record<FlightStripLocation, FlightStripData[]>
   selectedFlightStrip: (FlightStripData & { location: FlightStripLocation }) | null
@@ -21,16 +26,19 @@ interface FlightsState {
     strip: (FlightStripData & { location: FlightStripLocation }) | null
   ) => void
   moveFlightStrip: (args: {
-    source: { callsign: string; location: FlightStripLocation }
+    source: Identifier
     dest: { callsign?: string; location: FlightStripLocation }
   }) => void
-  transferFlightStrip: (args: { callsign: string; location: FlightStripLocation }) => void
-  timeStampStrip: (args: { callsign: string; location: FlightStripLocation }) => void
+  transferFlightStrip: (args: Identifier) => void
+  timeStampStrip: (args: Identifier) => void
+  stripToSelectHoldingPoint: Identifier | null
+  setStripToSelectHoldingPoint: (args: Identifier | null) => void
+  assignHoldingPointToStrip: (holdingPoint: string) => void
 }
 
 export const useFlightStore = create<FlightsState>((set) => ({
   flights: {
-    [FlightStripLocation.PENDING_ARRIVALS]: [],
+    [FlightStripLocation.PENDING_ARRIVALS]: [...mockArrivals],
     [FlightStripLocation.AIRBORNE_DEPS]: [],
     [FlightStripLocation.ARRIVAL_SEQ]: [],
     [FlightStripLocation.RUNWAY_1]: [],
@@ -41,6 +49,25 @@ export const useFlightStore = create<FlightsState>((set) => ({
   },
   selectedFlightStrip: null,
   setSelectedFlightStrip: (callsign) => set({ selectedFlightStrip: callsign }),
+  stripToSelectHoldingPoint: null,
+  setStripToSelectHoldingPoint: (strip) => set({ stripToSelectHoldingPoint: strip }),
+  assignHoldingPointToStrip: (holdingPoint) =>
+    set((state) => {
+      if (state.stripToSelectHoldingPoint === null) return state
+
+      const newState: FlightsState = JSON.parse(JSON.stringify(state))
+      const stripIndex = getStripIndex(
+        newState.flights[state.stripToSelectHoldingPoint.location],
+        state.stripToSelectHoldingPoint.callsign
+      )
+      if (stripIndex === -1) return state
+
+      newState.flights[state.stripToSelectHoldingPoint.location][
+        stripIndex
+      ].holdingPoint = holdingPoint
+
+      return newState
+    }),
   moveFlightStrip: ({ source, dest }) =>
     // eslint-disable-next-line sonarjs/cognitive-complexity
     {
@@ -80,14 +107,16 @@ export const useFlightStore = create<FlightsState>((set) => ({
       const newState: FlightsState = JSON.parse(JSON.stringify(state))
 
       const sourceIndex = getStripIndex(newState.flights[location], callsign)
-      if (
-        sourceIndex == -1 ||
-        newState.flights[location][sourceIndex].departureTime !== null
-      ) {
+      const souceStrip = newState.flights[location][sourceIndex]
+      if (sourceIndex == -1 || souceStrip.departureTime !== null) {
         return state
       }
 
-      newState.flights[location][sourceIndex].departureTime = format(Date.now(), 'mm:ss')
+      if (souceStrip.type === 'departure') {
+        souceStrip.departureTime = format(Date.now(), 'mm:ss')
+      } else {
+        souceStrip.arrivalTime = format(Date.now(), 'HHmm')
+      }
       return newState
     })
   },

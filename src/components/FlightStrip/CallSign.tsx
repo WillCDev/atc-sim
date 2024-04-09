@@ -7,9 +7,10 @@ interface Props {
   style?: CSSProperties
   data: FlightStripData
   location: FlightStripLocation
+  disabled?: boolean
 }
 
-export const CallSign: FC<Props> = ({ style, data, location }) => {
+export const CallSign: FC<Props> = ({ style, data, location, disabled }) => {
   const selectedStrip = useFlightStore((state) => state.selectedFlightStrip)
   const selectCallSign = useFlightStore((state) => state.setSelectedFlightStrip)
   const moveFlightstrip = useFlightStore((state) => state.moveFlightStrip)
@@ -18,6 +19,7 @@ export const CallSign: FC<Props> = ({ style, data, location }) => {
   const isSelected = selectedCallsign === data.callsign
 
   const handleClick = () => {
+    if (disabled) return
     if (!selectedCallsign) {
       return selectCallSign({ ...data, location })
     }
