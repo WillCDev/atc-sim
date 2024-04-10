@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { InfoStrip } from '@/components/InfoStrip'
-import { FlightStripLocation, useFlightStore } from '@/store'
+import { useFlightStore } from '@/store'
 import { StripBay } from './StripBay'
+import { FlightStripLocation } from '@/types'
 
 export const PendingArrivalsBay: FC = () => {
   const strips = useFlightStore((state) => state.flights.PENDING_ARRIVALS)

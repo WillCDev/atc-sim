@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { FlightStrip } from '@/components/FlightStrip'
 import styled from 'styled-components'
-import { FlightStripLocation, useFlightStore } from '@/store'
+import { useFlightStore } from '@/store'
+import { FlightStripData, FlightStripLocation } from '@/types'
 
 export interface StripBayProps {
   strips: FlightStripData[]
@@ -9,6 +10,7 @@ export interface StripBayProps {
   canTransferDepartures?: boolean
   canTransferArrivals?: boolean
   canTimestamp?: boolean
+  canConfirmDepartureClearance?: boolean
   location: FlightStripLocation
   children: React.ReactNode
 }
@@ -18,6 +20,7 @@ export const StripBay: FC<StripBayProps> = ({
   children,
   allowedStripTypes,
   canTransferDepartures,
+  canConfirmDepartureClearance,
   canTransferArrivals,
   canTimestamp,
   location,
@@ -53,10 +56,11 @@ export const StripBay: FC<StripBayProps> = ({
           <FlightStrip
             key={strip.callsign}
             data={strip}
+            location={location}
+            canConfirmDepartureClearance={!!canConfirmDepartureClearance}
             canTransferDepartures={!!canTransferDepartures}
             canTransferArrivals={!!canTransferArrivals}
             canTimestamp={!!canTimestamp}
-            location={location}
           />
         ))}
       </Bay>

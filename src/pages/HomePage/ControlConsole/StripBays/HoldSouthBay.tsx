@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { InfoStrip } from '@/components/InfoStrip'
 import { StripBay } from './StripBay'
-import { FlightStripLocation, useFlightStore, useSimStore } from '@/store'
+import { useFlightStore, useSimStore } from '@/store'
+import { FlightStripLocation } from '@/types'
 
 export const HoldSouthBay: FC = () => {
   const strips = useFlightStore((state) => state.flights.HOLD_S)

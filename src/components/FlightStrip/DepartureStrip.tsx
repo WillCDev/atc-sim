@@ -2,25 +2,30 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Colors } from '@/constants/styles'
 import { CallSign } from './CallSign'
-import { useFlightStore, type FlightStripLocation } from '@/store'
+import { useFlightStore, useSimStore } from '@/store'
 import { Content, Panel, TransferOverlay, Value } from './FlightStrip.styles'
+import { FlightStripData, FlightStripLocation } from '@/types'
 
 interface Props {
   data: FlightStripData
   canBeTranfered: boolean
   canTimeStamp: boolean
   location: FlightStripLocation
+  canBeClearedForDeparture: boolean
 }
 
 export const DepartureStrip: FC<Props> = ({
   data,
   canBeTranfered,
   canTimeStamp,
+  canBeClearedForDeparture,
   location,
 }) => {
+  const isDualRunway = useSimStore((state) => state.isDualRunway)
   const transerStrip = useFlightStore((state) => state.transferFlightStrip)
   const timeStampStrip = useFlightStore((state) => state.timeStampStrip)
   const selectHoldingPoint = useFlightStore((state) => state.setStripToSelectHoldingPoint)
+  const clearForDeparture = useFlightStore((state) => state.clearStripForDeparture)
 
   const handleTransfer = () => {
     if (!canBeTranfered) return
@@ -30,6 +35,11 @@ export const DepartureStrip: FC<Props> = ({
   const handleTimeStamp = () => {
     if (!canTimeStamp) return
     timeStampStrip({ callsign: data.callsign, location })
+  }
+
+  const handleClearForDeparture = () => {
+    if (!canBeClearedForDeparture) return
+    clearForDeparture({ callsign: data.callsign, location })
   }
 
   const onSelectHoldingPoint = () => {
@@ -48,7 +58,7 @@ export const DepartureStrip: FC<Props> = ({
           disabled={data.isTransfered}
         />
 
-        <Value style={{ gridArea: '1 / 3 / 2 / 4' }}>{data.callsign}</Value>
+        <Value style={{ gridArea: '1 / 3 / 2 / 4' }}>{data.classification}</Value>
         <div style={{ display: 'flex', gridArea: '2 / 3 / 3 / 4' }}>
           <Value style={{ flexGrow: 1 }}>{data.squawk ?? ''}</Value>
           <Value style={{ flexGrow: 1, textAlign: 'center' }}>I</Value>
@@ -58,7 +68,6 @@ export const DepartureStrip: FC<Props> = ({
         <div style={{ display: 'flex', gridArea: '2 / 4 / 3 / 5' }}>
           <Value
             style={{ flexGrow: 1, textAlign: 'center', cursor: 'pointer' }}
-            $color={Colors.green}
             onClick={onSelectHoldingPoint}
           >
             {data.holdingPoint ?? 'A'}
@@ -67,14 +76,20 @@ export const DepartureStrip: FC<Props> = ({
         </div>
 
         <Value style={{ gridArea: '1 / 5 / 2 / 6' }} />
-        <Value style={{ gridArea: '2 / 5 / 3 / 6' }}>{data.destination}</Value>
+        <Value
+          style={{ gridArea: '2 / 5 / 3 / 6' }}
+          $color={data.isClearedForDeparture ? Colors.green : undefined}
+          onClick={handleClearForDeparture}
+        >
+          {data.destination}
+        </Value>
 
         <Value
           style={{
             gridArea: '1 / 6 / 3 / 7',
             cursor: canBeTranfered ? 'pointer' : 'initial',
           }}
-          onClick={handleTransfer}
+          onClick={!isDualRunway ? handleTransfer : undefined}
         >
           QSY
         </Value>
@@ -85,7 +100,7 @@ export const DepartureStrip: FC<Props> = ({
         <Value
           style={{ gridArea: '1 / 8 / 3 / 9' }}
           $color={Colors.white}
-          onClick={handleTimeStamp}
+          onClick={isDualRunway ? handleTransfer : handleTimeStamp}
         >
           {data.sid}
         </Value>

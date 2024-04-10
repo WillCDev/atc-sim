@@ -1,18 +1,8 @@
 import { create } from 'zustand'
+import { FlightStripData, FlightStripLocation } from '@/types'
 import { mockArrivals, mockDepartures } from './mockFlights'
 import { move } from 'move-position'
 import { format } from 'date-fns'
-
-export enum FlightStripLocation {
-  PENDING_ARRIVALS = 'PENDING_ARRIVALS',
-  AIRBORNE_DEPS = 'AIRBORNE_DEPS',
-  ARRIVAL_SEQ = 'ARRIVAL_SEQ',
-  RUNWAY_1 = 'RUNWAY_1',
-  R1_LOOP = 'R1_LOOP',
-  HOLD_S = 'HOLD_S',
-  HOLD_N = 'HOLD_N',
-  UNASSIGNED = 'UNASSIGNED',
-}
 
 interface Identifier {
   callsign: string
@@ -34,6 +24,8 @@ interface FlightsState {
   stripToSelectHoldingPoint: Identifier | null
   setStripToSelectHoldingPoint: (args: Identifier | null) => void
   assignHoldingPointToStrip: (holdingPoint: string) => void
+  clearStripForDeparture: (strip: Identifier) => void
+  removeStrip: (strip: Identifier) => void
 }
 
 export const useFlightStore = create<FlightsState>((set) => ({
@@ -117,6 +109,31 @@ export const useFlightStore = create<FlightsState>((set) => ({
       } else {
         souceStrip.arrivalTime = format(Date.now(), 'HHmm')
       }
+      return newState
+    })
+  },
+  clearStripForDeparture: ({ callsign, location }) => {
+    set((state) => {
+      const newState: FlightsState = JSON.parse(JSON.stringify(state))
+
+      const sourceIndex = getStripIndex(newState.flights[location], callsign)
+      if (sourceIndex == -1) return state
+
+      const sourceStrip = newState.flights[location][sourceIndex]
+      if (sourceStrip.isClearedForDeparture) return state
+
+      newState.flights[location][sourceIndex].isClearedForDeparture = true
+      return newState
+    })
+  },
+  removeStrip: ({ callsign, location }) => {
+    set((state) => {
+      const newState: FlightsState = JSON.parse(JSON.stringify(state))
+
+      const sourceIndex = getStripIndex(newState.flights[location], callsign)
+      if (sourceIndex == -1) return state
+
+      newState.flights[location].splice(sourceIndex, 1)
       return newState
     })
   },

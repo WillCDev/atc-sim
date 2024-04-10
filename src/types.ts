@@ -1,19 +1,21 @@
-declare module '*.svg' {
-  import * as React from 'react'
-
-  export const ReactComponent: React.FunctionComponent<
-    React.SVGProps<SVGSVGElement> & { title?: string }
-  >
-
-  const src: string
-  export default src
-}
-
-declare interface FlightStripControlProps {
+interface FlightStripControlProps {
   isTransfered: boolean // False by default, greyed out once transfered
+  isClearedForDeparture: boolean // False by default, green once cleared
+  location: FlightStripLocation
 }
 
-declare interface FlightStripData extends FlightStripControlProps {
+export enum FlightStripLocation {
+  PENDING_ARRIVALS = 'PENDING_ARRIVALS',
+  AIRBORNE_DEPS = 'AIRBORNE_DEPS',
+  ARRIVAL_SEQ = 'ARRIVAL_SEQ',
+  RUNWAY_1 = 'RUNWAY_1',
+  R1_LOOP = 'R1_LOOP',
+  HOLD_S = 'HOLD_S',
+  HOLD_N = 'HOLD_N',
+  UNASSIGNED = 'UNASSIGNED',
+}
+
+export interface FlightStripData extends FlightStripControlProps {
   type: 'arrival' | 'departure'
   callsign: string // Set at begining of SIM
   departureTime: string | null // ONLY When in Runway bay, user selects SID, which timestamps. else timestamp auto applied when moved to Airborne Deps
@@ -32,9 +34,14 @@ declare interface FlightStripData extends FlightStripControlProps {
   sid: string | null // 'DESIG 1S' Set at begining of SIM
 }
 
-declare interface SimState {
-  simType: 'tower' | 'radar'
-  arrivalRunway: string
-  departureRunway: string
-  qnh: string
-}
+// DEPARTURES
+
+// Single Runway
+// SID does not timestamp until cleared for departure
+// CLicking destination, dest goes green, can now timestamp, but only in Runway Bay
+
+// Dual Runway
+// Can't clear for departure ever
+// Can't timestamp ever
+// Cannot move departures into Airborne Deps
+// Clicking SID whilst in HOLD_S, transfers strip

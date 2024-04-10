@@ -2,7 +2,8 @@ import { FC } from 'react'
 import { Colors } from '@/constants/styles'
 import { InfoStrip } from '@/components/InfoStrip'
 import { StripBay } from './StripBay'
-import { FlightStripLocation, useFlightStore } from '@/store'
+import { useFlightStore } from '@/store'
+import { FlightStripLocation } from '@/types'
 
 export const HoldNorthBay: FC = () => {
   const strips = useFlightStore((state) => state.flights.HOLD_N)
@@ -12,7 +13,6 @@ export const HoldNorthBay: FC = () => {
       allowedStripTypes={['arrival', 'departure']}
       strips={strips}
       location={FlightStripLocation.HOLD_N}
-      canTransferArrivals={true}
     >
       <InfoStrip
         items={[

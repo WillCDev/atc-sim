@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { InfoStrip } from '@/components/InfoStrip'
 import { StripBay } from './StripBay'
-import { FlightStripLocation, useFlightStore } from '@/store'
+import { useFlightStore } from '@/store'
+import { FlightStripLocation } from '@/types'
 
 export const R1LoopBay: FC = () => {
   const strips = useFlightStore((state) => state.flights.R1_LOOP)

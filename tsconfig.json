@@ -24,6 +24,6 @@
     },
     "types": ["vite/client", "react", "react-dom"]
   },
-  "include": ["src", "src/custom.d.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

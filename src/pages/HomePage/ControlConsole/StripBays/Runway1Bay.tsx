@@ -1,18 +1,20 @@
 import { FC } from 'react'
 import { InfoStrip } from '@/components/InfoStrip'
 import { StripBay } from './StripBay'
-import { FlightStripLocation, useFlightStore } from '@/store'
+import { useFlightStore, useSimStore } from '@/store'
+import { FlightStripLocation } from '@/types'
 
 export const Runway1Bay: FC = () => {
   const strips = useFlightStore((state) => state.flights.RUNWAY_1)
+  const isDualRunway = useSimStore((state) => state.isDualRunway)
 
   return (
     <StripBay
       allowedStripTypes={['arrival', 'departure']}
-      canTimestamp
+      canTimestamp={!isDualRunway}
       strips={strips}
       location={FlightStripLocation.RUNWAY_1}
-      canTransferArrivals
+      canConfirmDepartureClearance={!isDualRunway}
     >
       <InfoStrip
         items={[

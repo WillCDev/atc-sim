@@ -1,3 +1,5 @@
+import { FlightStripData, FlightStripLocation } from '@/types'
+
 export const mockDepartures: FlightStripData[] = [
   {
     type: 'departure',
@@ -12,6 +14,8 @@ export const mockDepartures: FlightStripData[] = [
     origin: 'OEJN',
     sid: 'DESIG 1S',
     isTransfered: false,
+    location: FlightStripLocation.HOLD_N,
+    isClearedForDeparture: false,
   },
   {
     type: 'departure',
@@ -26,6 +30,8 @@ export const mockDepartures: FlightStripData[] = [
     origin: 'OEJN',
     sid: 'DESIG 1S',
     isTransfered: false,
+    location: FlightStripLocation.HOLD_N,
+    isClearedForDeparture: false,
   },
 ]
 
@@ -43,5 +49,7 @@ export const mockArrivals: FlightStripData[] = [
     origin: 'OEJN',
     sid: null,
     isTransfered: false,
+    isClearedForDeparture: false,
+    location: FlightStripLocation.PENDING_ARRIVALS,
   },
 ]

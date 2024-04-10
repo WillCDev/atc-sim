@@ -1,23 +1,20 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { Colors } from '@/constants/styles'
-import { CallSign } from './CallSign'
-import { useFlightStore, type FlightStripLocation, useSimStore } from '@/store'
-import { Content, Panel, TransferOverlay, Value } from './FlightStrip.styles'
+import { CallSign } from '../CallSign'
+import { useFlightStore, useSimStore } from '@/store'
+import { Content, Panel, TransferOverlay, Value } from '../FlightStrip.styles'
+import { FlightStripData, FlightStripLocation } from '@/types'
+import { useArrivalStripControlRules } from './useArrivalStripControlRules'
 
 interface Props {
   data: FlightStripData
-  canBeTranfered: boolean
-  canTimeStamp: boolean
   location: FlightStripLocation
 }
 
-export const ArrivalStrip: FC<Props> = ({
-  data,
-  canBeTranfered,
-  canTimeStamp,
-  location,
-}) => {
+export const ArrivalStrip: FC<Props> = ({ data, location }) => {
+  const { canBeTranfered, canTimeStamp } = useArrivalStripControlRules(data)
+
   const arrivalRunway = useSimStore((state) => state.arrivalRunway)
   const transerStrip = useFlightStore((state) => state.transferFlightStrip)
   const timeStampStrip = useFlightStore((state) => state.timeStampStrip)
