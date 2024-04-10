@@ -1,10 +1,13 @@
-import express, { Express, Request, Response, urlencoded } from 'express'
+import express, { Express, Request, Response } from 'express'
 import { FlightsState } from './flightsState'
+import dotenv from 'dotenv'
 import { CreateFlightData, FlightData, FlightDataSchema } from './types'
+
+dotenv.config()
 
 const app: Express = express()
 app.use(express.json())
-const port = 3001
+const port = process.env.PORT || 3001
 
 const flightState = new FlightsState()
 
