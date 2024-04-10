@@ -17,30 +17,28 @@ export enum FlightStripLocation {
 export interface FlightStripData extends FlightStripControlProps {
   type: 'arrival' | 'departure'
   callsign: string // Set at begining of SIM
-  departureTime: string | null // ONLY When in Runway bay, user selects SID, which timestamps. else timestamp auto applied when moved to Airborne Deps
-  arrivalTime: string | null // ??
+  departureTime: string | null // Selected by user during SIM
+  arrivalTime: string | null // Selected by user during SIM
   classification: string | null // Set at begining of SIM
   squawk: string | null // Set at begining of SIM
-  // atis: 'I' // Hard Coded
-  holdingPoint: string | null // 'A' / 'B' Selected by user from Map
+  holdingPoint: string | null // Selected by user from Map
   qnh: string | null // '1014' derived from Simulator
   destination: string | null // 'OMAA' Set at begining of SIM
   origin: string | null // 'OEJN' Set at Begining of SIM
-  // transfer: string // Hardcode as QSY for Departures, and >GMC for Arrivals, doesn't need to be configurable
-  // arrivalInfo: string // Hardcode as C, 23R, ILS, doesn't need to be configurable
-  // 207 hardcoded
-  // HDG/CLD Hardcoded
-  sid: string | null // 'DESIG 1S' Set at begining of SIM
+  sid: string | null
 }
 
 // DEPARTURES
+// SID is always prepopulated as one of these, KUXEM_1R, EKLAD_1R, SONEX_1R, POL_5R, SANBA_1R, LISTO_2R
 
 // Single Runway
 // SID does not timestamp until cleared for departure
 // CLicking destination, dest goes green, can now timestamp, but only in Runway Bay
+// Holding Point is always prepopulate as J1
 
 // Dual Runway
 // Can't clear for departure ever
 // Can't timestamp ever
 // Cannot move departures into Airborne Deps
 // Clicking SID whilst in HOLD_S, transfers strip
+// Holding Point is always prepopulated as either, F1, H1, or P1

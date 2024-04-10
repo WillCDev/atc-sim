@@ -47,6 +47,7 @@ export const HoldingPointSelectModal: FC = () => {
         <Points.J3Point>J3</Points.J3Point>
         <Points.J4Point>J4</Points.J4Point>
         <Points.M1Point>M1</Points.M1Point>
+        <Points.T1Point>T1</Points.T1Point>
         <Points.FZ1Point>FZ1</Points.FZ1Point>
         <Points.HZ1Point>HZ1</Points.HZ1Point>
         <Points.DZ1Point>DZ1</Points.DZ1Point>

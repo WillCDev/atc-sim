@@ -17,7 +17,7 @@ export const useSimStore = create<SimState>()(
     (set) => ({
       simType: 'tower',
       arrivalRunway: '23R',
-      departureRunway: '23R',
+      departureRunway: '23L',
       qnh: '1014',
       setSimType: (simType: SimState['simType']) => set({ simType }),
       setArrivalRunway: (arrivalRunway: SimState['arrivalRunway']) =>

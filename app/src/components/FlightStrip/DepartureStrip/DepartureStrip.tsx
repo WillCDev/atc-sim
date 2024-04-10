@@ -64,7 +64,6 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
         <div style={{ display: 'flex', gridArea: '2 / 4 / 3 / 5' }}>
           <Value
             style={{ flexGrow: 1, textAlign: 'center', cursor: 'pointer' }}
-            $color={data.holdingPoint ? Colors.green : undefined}
             onClick={onSelectHoldingPoint}
           >
             {data.holdingPoint}

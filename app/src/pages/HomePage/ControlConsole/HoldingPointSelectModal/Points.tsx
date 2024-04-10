@@ -141,3 +141,8 @@ export const K5Point = styled(HoldingPoint)`
   top: 55%;
   right: 37%;
 `
+
+export const T1Point = styled(HoldingPoint)`
+  top: 21.5%;
+  right: 43%;
+`

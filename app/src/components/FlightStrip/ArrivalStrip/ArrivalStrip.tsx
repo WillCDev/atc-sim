@@ -53,7 +53,6 @@ export const ArrivalStrip: FC<Props> = ({ data, location }) => {
         <Value
           style={{ gridArea: '1 / 5 / 2 / 6', cursor: 'pointer' }}
           onClick={onSelectHoldingPoint}
-          $color={data.holdingPoint ? Colors.green : undefined}
         >
           {data.holdingPoint}
         </Value>
