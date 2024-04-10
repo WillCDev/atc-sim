@@ -5,7 +5,7 @@ import { useFlightStore } from '@/store'
 import { FlightStripLocation } from '@/types'
 
 export const ArrivalSeqBay: FC = () => {
-  const strips = useFlightStore((state) => state.flights.ARRIVAL_SEQ)
+  const strips = useFlightStore((state) => state.flightLocations.ARRIVAL_SEQ)
 
   return (
     <StripBay

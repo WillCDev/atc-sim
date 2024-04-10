@@ -1,7 +1,8 @@
 import { CSSProperties, FC } from 'react'
 import { DisplayItem } from '../ItemDisplay'
 import { Colors } from '@/constants/styles'
-import { FlightStripLocation, useFlightStore } from '@/store'
+import { useFlightStore } from '@/store'
+import { FlightStripData, FlightStripLocation } from '@/types'
 
 interface Props {
   style?: CSSProperties
@@ -27,10 +28,7 @@ export const CallSign: FC<Props> = ({ style, data, location, disabled }) => {
       return selectCallSign(null)
     }
 
-    moveFlightstrip({
-      source: { callsign: selectedCallsign, location: selectedStrip.location },
-      dest: { callsign: data.callsign, location },
-    })
+    moveFlightstrip({ callsign: data.callsign, location })
   }
 
   return (

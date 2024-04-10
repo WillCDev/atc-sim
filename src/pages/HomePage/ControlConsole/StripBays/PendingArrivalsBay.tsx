@@ -5,7 +5,7 @@ import { StripBay } from './StripBay'
 import { FlightStripLocation } from '@/types'
 
 export const PendingArrivalsBay: FC = () => {
-  const strips = useFlightStore((state) => state.flights.PENDING_ARRIVALS)
+  const strips = useFlightStore((state) => state.flightLocations.PENDING_ARRIVALS)
 
   return (
     <StripBay

@@ -6,7 +6,7 @@ import { useFlightStore } from '@/store'
 import { FlightStripLocation } from '@/types'
 
 export const HoldNorthBay: FC = () => {
-  const strips = useFlightStore((state) => state.flights.HOLD_N)
+  const strips = useFlightStore((state) => state.flightLocations.HOLD_N)
 
   return (
     <StripBay

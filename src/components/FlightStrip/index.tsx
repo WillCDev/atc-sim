@@ -1,38 +1,40 @@
-import { FC, useEffect } from 'react'
+import { FC, memo, useEffect } from 'react'
 import { ArrivalStrip } from './ArrivalStrip'
 import { DepartureStrip } from './DepartureStrip'
 import { useFlightStore } from '@/store'
-import { FlightStripData, FlightStripLocation } from '@/types'
+import { FlightStripLocation } from '@/types'
 
 interface Props {
-  data: FlightStripData
+  callsign: string
   canTransferDepartures: boolean
   canConfirmDepartureClearance: boolean
   canTimestamp: boolean
   location: FlightStripLocation
 }
 
-export const FlightStrip: FC<Props> = ({
-  data,
+const FlightStripBase: FC<Props> = ({
+  callsign,
   canTransferDepartures,
   canConfirmDepartureClearance,
   canTimestamp,
   location,
 }) => {
+  const data = useFlightStore((state) => state.flights[callsign])
   const removeStrip = useFlightStore((state) => state.removeStrip)
 
   useEffect(() => {
-    if (data.isTransfered) {
+    if (data?.isTransfered) {
       const random1To4 = Math.floor(Math.random() * 4) + 1
       const timer = setTimeout(() => {
-        removeStrip({ callsign: data.callsign, location })
+        removeStrip({ callsign: data.callsign, location: location })
         clearTimeout(timer)
       }, random1To4 * 1000)
 
       return () => clearTimeout(timer)
     }
-  }, [data.isTransfered])
+  }, [data?.isTransfered])
 
+  if (!data) return null
   if (data.type === 'arrival') return <ArrivalStrip data={data} location={location} />
 
   return (
@@ -50,3 +52,5 @@ export const FlightStrip: FC<Props> = ({
     />
   )
 }
+
+export const FlightStrip = memo(FlightStripBase)

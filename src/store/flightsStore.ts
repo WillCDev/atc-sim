@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { FlightStripData, FlightStripLocation } from '@/types'
-import { mockArrivals, mockDepartures } from './mockFlights'
 import { move } from 'move-position'
 import { format } from 'date-fns'
 
@@ -10,34 +9,55 @@ interface Identifier {
 }
 
 interface FlightsState {
-  flights: Record<FlightStripLocation, FlightStripData[]>
+  flights: Record<string, FlightStripData>
+  flightLocations: Record<FlightStripLocation, string[]>
+  insertNewArrival: (flight: FlightStripData) => void
+  insertNewDeparture: (flight: FlightStripData) => void
   selectedFlightStrip: (FlightStripData & { location: FlightStripLocation }) | null
   setSelectedFlightStrip: (
     strip: (FlightStripData & { location: FlightStripLocation }) | null
   ) => void
-  moveFlightStrip: (args: {
-    source: Identifier
-    dest: { callsign?: string; location: FlightStripLocation }
-  }) => void
-  transferFlightStrip: (args: Identifier) => void
-  timeStampStrip: (args: Identifier) => void
-  stripToSelectHoldingPoint: Identifier | null
-  setStripToSelectHoldingPoint: (args: Identifier | null) => void
+  moveFlightStrip: (args: { callsign?: string; location: FlightStripLocation }) => void
+  transferFlightStrip: (callsign: string) => void
+  timeStampStrip: (callsign: string) => void
+  stripToSelectHoldingPoint: string | null
+  setStripToSelectHoldingPoint: (callsign: string | null) => void
   assignHoldingPointToStrip: (holdingPoint: string) => void
-  clearStripForDeparture: (strip: Identifier) => void
-  removeStrip: (strip: Identifier) => void
+  clearStripForDeparture: (callsign: string) => void
+  removeStrip: (arg: Identifier) => void
 }
 
 export const useFlightStore = create<FlightsState>((set) => ({
-  flights: {
-    [FlightStripLocation.PENDING_ARRIVALS]: [...mockArrivals],
+  flights: {},
+  flightLocations: {
+    [FlightStripLocation.PENDING_ARRIVALS]: [],
     [FlightStripLocation.AIRBORNE_DEPS]: [],
     [FlightStripLocation.ARRIVAL_SEQ]: [],
     [FlightStripLocation.RUNWAY_1]: [],
     [FlightStripLocation.R1_LOOP]: [],
     [FlightStripLocation.HOLD_S]: [],
-    [FlightStripLocation.HOLD_N]: [...mockDepartures],
+    [FlightStripLocation.HOLD_N]: [],
     [FlightStripLocation.UNASSIGNED]: [],
+  },
+  insertNewArrival: (flight) => {
+    set((state) => {
+      state.flights[flight.callsign] = flight
+      const list = state.flightLocations[FlightStripLocation.PENDING_ARRIVALS]
+      state.flightLocations[FlightStripLocation.PENDING_ARRIVALS] = [
+        ...list,
+        flight.callsign,
+      ]
+
+      return { ...state }
+    })
+  },
+  insertNewDeparture: (flight) => {
+    set((state) => {
+      state.flights[flight.callsign] = flight
+      const list = state.flightLocations[FlightStripLocation.HOLD_N]
+      state.flightLocations[FlightStripLocation.HOLD_N] = [...list, flight.callsign]
+      return { ...state }
+    })
   },
   selectedFlightStrip: null,
   setSelectedFlightStrip: (callsign) => set({ selectedFlightStrip: callsign }),
@@ -47,33 +67,29 @@ export const useFlightStore = create<FlightsState>((set) => ({
     set((state) => {
       if (state.stripToSelectHoldingPoint === null) return state
 
-      const newState: FlightsState = JSON.parse(JSON.stringify(state))
-      const stripIndex = getStripIndex(
-        newState.flights[state.stripToSelectHoldingPoint.location],
-        state.stripToSelectHoldingPoint.callsign
-      )
-      if (stripIndex === -1) return state
+      const strip = state.flights[state.stripToSelectHoldingPoint]
+      if (!strip) return state
 
-      newState.flights[state.stripToSelectHoldingPoint.location][
-        stripIndex
-      ].holdingPoint = holdingPoint
-
-      return newState
+      state.flights[strip.callsign] = { ...strip, holdingPoint }
+      return { ...state }
     }),
-  moveFlightStrip: ({ source, dest }) =>
+  moveFlightStrip: (dest) =>
     // eslint-disable-next-line sonarjs/cognitive-complexity
     {
       set((state) => {
         const newState: FlightsState = { ...state }
 
+        const source = state.selectedFlightStrip
+        if (!source) return state
+
         const sourceIndex = getStripIndex(
-          newState.flights[source.location],
+          newState.flightLocations[source.location],
           source.callsign
         )
         if (sourceIndex == -1) return state
 
         const destinationIndex = dest.callsign
-          ? getStripIndex(newState.flights[dest.location], dest.callsign)
+          ? getStripIndex(newState.flightLocations[dest.location], dest.callsign)
           : undefined
 
         return moveFlightStrip(
@@ -83,64 +99,58 @@ export const useFlightStore = create<FlightsState>((set) => ({
         )
       })
     },
-  transferFlightStrip: ({ callsign, location }) => {
+  transferFlightStrip: (callsign) => {
     set((state) => {
-      const newState: FlightsState = JSON.parse(JSON.stringify(state))
+      const strip = state.flights[callsign]
+      if (!strip) return state
 
-      const sourceIndex = getStripIndex(newState.flights[location], callsign)
-      if (sourceIndex == -1) return state
-
-      newState.flights[location][sourceIndex].isTransfered = true
-      return newState
+      state.flights[strip.callsign] = { ...strip, isTransfered: true }
+      return { ...state }
     })
   },
-  timeStampStrip: ({ callsign, location }) => {
+  timeStampStrip: (callsign) => {
     set((state) => {
-      const newState: FlightsState = JSON.parse(JSON.stringify(state))
-
-      const sourceIndex = getStripIndex(newState.flights[location], callsign)
-      const souceStrip = newState.flights[location][sourceIndex]
-      if (sourceIndex == -1 || souceStrip.departureTime !== null) {
-        return state
-      }
-
-      if (souceStrip.type === 'departure') {
-        souceStrip.departureTime = format(Date.now(), 'mm:ss')
+      const strip = state.flights[callsign]
+      if (!strip.callsign) return state
+      if (strip.type === 'departure') {
+        strip.departureTime = format(Date.now(), 'mm:ss')
       } else {
-        souceStrip.arrivalTime = format(Date.now(), 'HHmm')
+        strip.arrivalTime = format(Date.now(), 'HHmm')
       }
-      return newState
+      state.flights[strip.callsign] = { ...strip }
+
+      return { ...state }
     })
   },
-  clearStripForDeparture: ({ callsign, location }) => {
+  clearStripForDeparture: (callsign) => {
     set((state) => {
-      const newState: FlightsState = JSON.parse(JSON.stringify(state))
+      const strip = state.flights[callsign]
+      if (!strip) return state
 
-      const sourceIndex = getStripIndex(newState.flights[location], callsign)
-      if (sourceIndex == -1) return state
-
-      const sourceStrip = newState.flights[location][sourceIndex]
-      if (sourceStrip.isClearedForDeparture) return state
-
-      newState.flights[location][sourceIndex].isClearedForDeparture = true
-      return newState
+      state.flights[strip.callsign] = { ...strip, isClearedForDeparture: true }
+      return { ...state }
     })
   },
   removeStrip: ({ callsign, location }) => {
     set((state) => {
-      const newState: FlightsState = JSON.parse(JSON.stringify(state))
+      const strip = state.flights[callsign]
+      if (!strip) return state
 
-      const sourceIndex = getStripIndex(newState.flights[location], callsign)
-      if (sourceIndex == -1) return state
+      const stripIndex = state.flightLocations[location].indexOf(strip.callsign)
+      if (stripIndex !== -1) return state
 
-      newState.flights[location].splice(sourceIndex, 1)
-      return newState
+      delete state.flights[strip.callsign]
+      state.flightLocations[location] = state.flightLocations[location].splice(
+        stripIndex,
+        1
+      )
+      return { ...state }
     })
   },
 }))
 
-const getStripIndex = (list: FlightStripData[], callsign: string) =>
-  list.findIndex((flight) => flight.callsign === callsign)
+const getStripIndex = (list: string[], callsign: string) =>
+  list.findIndex((item) => item === callsign)
 
 const moveFlightStrip = (
   state: FlightsState,
@@ -152,22 +162,23 @@ const moveFlightStrip = (
   if (source.location === dest.location) {
     if (dest.index === undefined) return newState
 
-    newState.flights[dest.location] = move(newState.flights[dest.location], [
-      { from: source.index, to: dest.index },
-    ])
+    newState.flightLocations[dest.location] = move(
+      newState.flightLocations[dest.location],
+      [{ from: source.index, to: dest.index }]
+    )
   } else {
     if (dest.index === undefined) {
-      newState.flights[dest.location].push(
-        newState.flights[source.location][source.index]
+      newState.flightLocations[dest.location].push(
+        newState.flightLocations[source.location][source.index]
       )
     } else {
-      newState.flights[dest.location].splice(
+      newState.flightLocations[dest.location].splice(
         dest.index,
         0,
-        newState.flights[source.location][source.index]
+        newState.flightLocations[source.location][source.index]
       )
     }
-    newState.flights[source.location].splice(source.index, 1)
+    newState.flightLocations[source.location].splice(source.index, 1)
   }
 
   newState.selectedFlightStrip = null

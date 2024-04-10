@@ -5,7 +5,7 @@ import { useFlightStore, useSimStore } from '@/store'
 import { FlightStripLocation } from '@/types'
 
 export const HoldSouthBay: FC = () => {
-  const strips = useFlightStore((state) => state.flights.HOLD_S)
+  const strips = useFlightStore((state) => state.flightLocations.HOLD_S)
   const isDualRunway = useSimStore((state) => state.isDualRunway)
 
   return (

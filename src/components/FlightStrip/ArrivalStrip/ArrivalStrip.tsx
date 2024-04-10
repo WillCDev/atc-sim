@@ -22,16 +22,16 @@ export const ArrivalStrip: FC<Props> = ({ data, location }) => {
 
   const handleTransfer = () => {
     if (!canBeTranfered) return
-    transerStrip({ callsign: data.callsign, location })
+    transerStrip(data.callsign)
   }
 
   const handleTimeStamp = () => {
     if (!canTimeStamp) return
-    timeStampStrip({ callsign: data.callsign, location })
+    timeStampStrip(data.callsign)
   }
 
   const onSelectHoldingPoint = () => {
-    selectHoldingPoint({ callsign: data.callsign, location })
+    selectHoldingPoint(data.callsign)
   }
 
   return (

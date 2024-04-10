@@ -5,7 +5,7 @@ import { useFlightStore } from '@/store'
 import { FlightStripLocation } from '@/types'
 
 export const R1LoopBay: FC = () => {
-  const strips = useFlightStore((state) => state.flights.R1_LOOP)
+  const strips = useFlightStore((state) => state.flightLocations.R1_LOOP)
 
   return (
     <StripBay

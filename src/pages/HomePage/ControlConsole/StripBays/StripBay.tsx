@@ -5,10 +5,9 @@ import { useFlightStore } from '@/store'
 import { FlightStripData, FlightStripLocation } from '@/types'
 
 export interface StripBayProps {
-  strips: FlightStripData[]
+  strips: string[]
   allowedStripTypes: Array<FlightStripData['type']>
   canTransferDepartures?: boolean
-  canTransferArrivals?: boolean
   canTimestamp?: boolean
   canConfirmDepartureClearance?: boolean
   location: FlightStripLocation
@@ -16,12 +15,11 @@ export interface StripBayProps {
 }
 
 export const StripBay: FC<StripBayProps> = ({
-  strips,
   children,
+  strips,
   allowedStripTypes,
   canTransferDepartures,
   canConfirmDepartureClearance,
-  canTransferArrivals,
   canTimestamp,
   location,
 }) => {
@@ -39,11 +37,8 @@ export const StripBay: FC<StripBayProps> = ({
 
   const handleClick = () => {
     if (canReceiveStrip) {
-      moveFlightStrip({
-        source: { callsign: selectedStrip.callsign, location: selectedStrip.location },
-        dest: { location },
-      })
-      if (addTimeStamp) timeStampStrip({ callsign: selectedStrip.callsign, location })
+      moveFlightStrip({ location })
+      if (addTimeStamp) timeStampStrip(selectedStrip.callsign)
     }
   }
 
@@ -54,12 +49,11 @@ export const StripBay: FC<StripBayProps> = ({
       <Bay>
         {strips.map((strip) => (
           <FlightStrip
-            key={strip.callsign}
-            data={strip}
+            key={strip}
+            callsign={strip}
             location={location}
             canConfirmDepartureClearance={!!canConfirmDepartureClearance}
             canTransferDepartures={!!canTransferDepartures}
-            canTransferArrivals={!!canTransferArrivals}
             canTimestamp={!!canTimestamp}
           />
         ))}
