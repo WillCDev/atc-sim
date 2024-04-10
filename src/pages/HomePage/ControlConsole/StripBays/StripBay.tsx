@@ -7,9 +7,6 @@ import { FlightStripData, FlightStripLocation } from '@/types'
 export interface StripBayProps {
   strips: string[]
   allowedStripTypes: Array<FlightStripData['type']>
-  canTransferDepartures?: boolean
-  canTimestamp?: boolean
-  canConfirmDepartureClearance?: boolean
   location: FlightStripLocation
   children: React.ReactNode
 }
@@ -18,9 +15,6 @@ export const StripBay: FC<StripBayProps> = ({
   children,
   strips,
   allowedStripTypes,
-  canTransferDepartures,
-  canConfirmDepartureClearance,
-  canTimestamp,
   location,
 }) => {
   const selectedStrip = useFlightStore((state) => state.selectedFlightStrip)
@@ -48,14 +42,7 @@ export const StripBay: FC<StripBayProps> = ({
       <ClickableArea onClick={handleClick} $enabled={canReceiveStrip} />
       <Bay>
         {strips.map((strip) => (
-          <FlightStrip
-            key={strip}
-            callsign={strip}
-            location={location}
-            canConfirmDepartureClearance={!!canConfirmDepartureClearance}
-            canTransferDepartures={!!canTransferDepartures}
-            canTimestamp={!!canTimestamp}
-          />
+          <FlightStrip key={strip} callsign={strip} location={location} />
         ))}
       </Bay>
     </Wrapper>
@@ -77,6 +64,5 @@ const Bay = styled.div`
 
 const ClickableArea = styled.div<{ $enabled: boolean }>`
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
-  /* background-color: ${({ $enabled }) => ($enabled ? '#ff000055' : 'transparent')}; */
   flex: 1;
 `

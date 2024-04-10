@@ -11,7 +11,6 @@ export const AirborneDepsBay: FC = () => {
   return (
     <StripBay
       allowedStripTypes={isDualRunway ? [] : ['departure']}
-      canTransferDepartures={!isDualRunway}
       strips={strips}
       location={FlightStripLocation.AIRBORNE_DEPS}
     >

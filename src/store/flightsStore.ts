@@ -71,7 +71,7 @@ export const useFlightStore = create<FlightsState>((set) => ({
       if (!strip) return state
 
       state.flights[strip.callsign] = { ...strip, holdingPoint }
-      return { ...state }
+      return { ...state, stripToSelectHoldingPoint: null }
     }),
   moveFlightStrip: (dest) =>
     // eslint-disable-next-line sonarjs/cognitive-complexity

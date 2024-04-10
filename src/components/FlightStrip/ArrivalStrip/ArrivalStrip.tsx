@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const ArrivalStrip: FC<Props> = ({ data, location }) => {
-  const { canBeTranfered, canTimeStamp } = useArrivalStripControlRules(data)
+  const { canBeTranfered, canTimeStamp } = useArrivalStripControlRules(data, location)
 
   const arrivalRunway = useSimStore((state) => state.arrivalRunway)
   const transerStrip = useFlightStore((state) => state.transferFlightStrip)
@@ -53,8 +53,9 @@ export const ArrivalStrip: FC<Props> = ({ data, location }) => {
         <Value
           style={{ gridArea: '1 / 5 / 2 / 6', cursor: 'pointer' }}
           onClick={onSelectHoldingPoint}
+          $color={data.holdingPoint ? Colors.green : undefined}
         >
-          B
+          {data.holdingPoint}
         </Value>
         <Value style={{ gridArea: '2 / 5 / 3 / 6' }}>I</Value>
 

@@ -1,27 +1,23 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { Colors } from '@/constants/styles'
-import { CallSign } from './CallSign'
+import { CallSign } from '../CallSign'
 import { useFlightStore, useSimStore } from '@/store'
-import { Content, Panel, TransferOverlay, Value } from './FlightStrip.styles'
+import { Content, Panel, TransferOverlay, Value } from '../FlightStrip.styles'
 import { FlightStripData, FlightStripLocation } from '@/types'
+import { useADepartureStripControlRules } from './useDepartureStripControlRules'
 
 interface Props {
   data: FlightStripData
-  canBeTranfered: boolean
-  canTimeStamp: boolean
   location: FlightStripLocation
-  canBeClearedForDeparture: boolean
 }
 
-export const DepartureStrip: FC<Props> = ({
-  data,
-  canBeTranfered,
-  canTimeStamp,
-  canBeClearedForDeparture,
-  location,
-}) => {
+export const DepartureStrip: FC<Props> = ({ data, location }) => {
   const isDualRunway = useSimStore((state) => state.isDualRunway)
+
+  const { canBeTranfered, canTimeStamp, canBeClearedForDeparture } =
+    useADepartureStripControlRules(data, location)
+
   const transerStrip = useFlightStore((state) => state.transferFlightStrip)
   const timeStampStrip = useFlightStore((state) => state.timeStampStrip)
   const selectHoldingPoint = useFlightStore((state) => state.setStripToSelectHoldingPoint)
@@ -68,9 +64,10 @@ export const DepartureStrip: FC<Props> = ({
         <div style={{ display: 'flex', gridArea: '2 / 4 / 3 / 5' }}>
           <Value
             style={{ flexGrow: 1, textAlign: 'center', cursor: 'pointer' }}
+            $color={data.holdingPoint ? Colors.green : undefined}
             onClick={onSelectHoldingPoint}
           >
-            {data.holdingPoint ?? 'A'}
+            {data.holdingPoint}
           </Value>
           <Value style={{ flexGrow: 1, textAlign: 'center' }}>{data.qnh}</Value>
         </div>

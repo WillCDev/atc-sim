@@ -6,19 +6,10 @@ import { FlightStripLocation } from '@/types'
 
 interface Props {
   callsign: string
-  canTransferDepartures: boolean
-  canConfirmDepartureClearance: boolean
-  canTimestamp: boolean
   location: FlightStripLocation
 }
 
-const FlightStripBase: FC<Props> = ({
-  callsign,
-  canTransferDepartures,
-  canConfirmDepartureClearance,
-  canTimestamp,
-  location,
-}) => {
+const FlightStripBase: FC<Props> = ({ callsign, location }) => {
   const data = useFlightStore((state) => state.flights[callsign])
   const removeStrip = useFlightStore((state) => state.removeStrip)
 
@@ -37,20 +28,7 @@ const FlightStripBase: FC<Props> = ({
   if (!data) return null
   if (data.type === 'arrival') return <ArrivalStrip data={data} location={location} />
 
-  return (
-    <DepartureStrip
-      data={data}
-      location={location}
-      canBeTranfered={canTransferDepartures && !data.isTransfered}
-      canBeClearedForDeparture={canConfirmDepartureClearance}
-      canTimeStamp={
-        canTimestamp &&
-        data.departureTime === null &&
-        !data.isTransfered &&
-        data.isClearedForDeparture
-      }
-    />
-  )
+  return <DepartureStrip data={data} location={location} />
 }
 
 export const FlightStrip = memo(FlightStripBase)

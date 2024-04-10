@@ -14,7 +14,6 @@ export const mockDepartures: FlightStripData[] = [
     origin: 'OEJN',
     sid: 'DESIG 1S',
     isTransfered: false,
-    location: FlightStripLocation.HOLD_N,
     isClearedForDeparture: false,
   },
   {
@@ -30,7 +29,6 @@ export const mockDepartures: FlightStripData[] = [
     origin: 'OEJN',
     sid: 'DESIG 1S',
     isTransfered: false,
-    location: FlightStripLocation.HOLD_N,
     isClearedForDeparture: false,
   },
 ]
@@ -50,6 +48,5 @@ export const mockArrivals: FlightStripData[] = [
     sid: null,
     isTransfered: false,
     isClearedForDeparture: false,
-    location: FlightStripLocation.PENDING_ARRIVALS,
   },
 ]

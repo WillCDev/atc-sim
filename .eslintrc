@@ -59,7 +59,8 @@
           "minimumDescriptionLength": 5
         }
       ],
-      "sonarjs/no-duplicate-string": "off"
+      "sonarjs/no-duplicate-string": "off",
+      "sonarjs/prefer-single-boolean-return": "off"
     },
     "overrides": [
       {
