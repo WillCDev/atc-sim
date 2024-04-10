@@ -1,4 +1,4 @@
-import { FlightStripData, FlightStripLocation } from '@/types'
+import { FlightStripData } from '@/types'
 
 export const mockDepartures: FlightStripData[] = [
   {
