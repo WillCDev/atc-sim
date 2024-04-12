@@ -31,11 +31,13 @@ app.get(
     try {
       const flights = flightState.getFlights()
       if (req.headers['accept'] === 'text/csv') {
-        return new ObjectsToCsv(flights).toString().then((csv: string) => {
-          res.setHeader('Content-Type', 'text/csv')
-          res.setHeader('Content-Disposition', 'attachment; filename="flights.csv"')
-          return res.status(200).send(csv)
-        })
+        return new ObjectsToCsv(flights.map(({ type, callsign }) => ({ type, callsign })))
+          .toString()
+          .then((csv: string) => {
+            res.setHeader('Content-Type', 'text/csv')
+            res.setHeader('Content-Disposition', 'attachment; filename="flights.csv"')
+            return res.status(200).send(csv)
+          })
       }
       return res.status(200).json({ data: flights })
     } catch (err: any) {
