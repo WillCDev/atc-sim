@@ -18,3 +18,13 @@ export const FlightDataSchema = z.object({
 
 export type CreateFlightData = z.infer<typeof FlightDataSchema>
 export type FlightData = CreateFlightData & { version: number }
+
+export const SimStateSchema = z.object({
+  simType: z.enum(['tower', 'radar']).default('tower'),
+  arrivalRunway: z.string().nullable().default(null),
+  departureRunway: z.string().nullable().default(null),
+  qnh: z.number().nullable().default(null),
+  started: z.boolean().default(false),
+})
+
+export type SimState = z.infer<typeof SimStateSchema>

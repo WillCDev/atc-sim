@@ -1,7 +1,14 @@
 import express, { Express, Request, Response } from 'express'
 import { FlightsState } from './flightsState'
 import dotenv from 'dotenv'
-import { CreateFlightData, FlightData, FlightDataSchema } from './types'
+import {
+  CreateFlightData,
+  FlightData,
+  FlightDataSchema,
+  SimState,
+  SimStateSchema,
+} from './types'
+import { Sim } from './simState'
 
 dotenv.config()
 
@@ -10,9 +17,11 @@ app.use(express.json())
 const port = process.env.PORT || 3001
 
 const flightState = new FlightsState()
+const simState = new Sim()
 
 const flightsEndpoint = '/api/flights'
 const pendingFlightsEndpoint = '/api/pendingFlights'
+const simEndpoint = '/api/sim'
 type MyResponse<T> = { data?: T; err?: string }
 
 app.get(flightsEndpoint, async (_: Request, res: Response<MyResponse<FlightData[]>>) => {
@@ -112,6 +121,42 @@ app.delete(
     }
   }
 )
+
+app.get(simEndpoint, async (_: Request, res: Response<MyResponse<SimState>>) => {
+  try {
+    const simData = simState.getSimData()
+    return res.status(200).json({ data: simData })
+  } catch (err: any) {
+    console.error(err)
+    return res.status(500).json({ err: err.message })
+  }
+})
+
+app.post(
+  simEndpoint,
+  async (req: Request<{}, {}, SimState>, res: Response<MyResponse<SimState>>) => {
+    try {
+      const { success } = SimStateSchema.safeParse(req.body)
+      if (!success) return res.status(400).json({ err: 'Invalid Sim Data' })
+
+      simState.setSimData(req.body)
+      return res.status(201).json({ data: req.body })
+    } catch (err: any) {
+      console.error(err)
+      return res.status(500).json({ err: err.message })
+    }
+  }
+)
+
+app.delete(simEndpoint, async (_: Request, res: Response<MyResponse<SimState>>) => {
+  try {
+    simState.resetSimData()
+    return res.status(200).json({ data: simState.getSimData() })
+  } catch (err: any) {
+    console.error(err)
+    return res.status(500).json({ err: err.message })
+  }
+})
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Port: ${port}`)
