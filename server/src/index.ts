@@ -1,3 +1,4 @@
+import ObjectsToCsv from 'objects-to-csv'
 import express, { Express, Request, Response } from 'express'
 import { FlightsState } from './flightsState'
 import dotenv from 'dotenv'
@@ -24,15 +25,25 @@ const pendingFlightsEndpoint = '/api/pendingFlights'
 const simEndpoint = '/api/sim'
 type MyResponse<T> = { data?: T; err?: string }
 
-app.get(flightsEndpoint, async (_: Request, res: Response<MyResponse<FlightData[]>>) => {
-  try {
-    const flights = flightState.getFlights()
-    return res.status(200).json({ data: flights })
-  } catch (err: any) {
-    console.error(err)
-    return res.status(500).json({ err: err.message })
+app.get(
+  flightsEndpoint,
+  async (req: Request, res: Response<MyResponse<FlightData[]> | string>) => {
+    try {
+      const flights = flightState.getFlights()
+      if (req.headers['accept'] === 'text/csv') {
+        return new ObjectsToCsv(flights).toString().then((csv: string) => {
+          res.setHeader('Content-Type', 'text/csv')
+          res.setHeader('Content-Disposition', 'attachment; filename="flights.csv"')
+          return res.status(200).send(csv)
+        })
+      }
+      return res.status(200).json({ data: flights })
+    } catch (err: any) {
+      console.error(err)
+      return res.status(500).json({ err: err.message })
+    }
   }
-})
+)
 
 app.get(
   pendingFlightsEndpoint,
