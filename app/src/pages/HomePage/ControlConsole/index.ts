@@ -1,1 +1,1 @@
-export * from './TowerControlConsole'
+export * from './ControlConsole'

@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import { css, keyframes } from 'styled-components'
 
 export const Colors = {
   lightGrey: '#c1c1c1',
@@ -21,4 +21,17 @@ export const PanelCSS = css`
   background-color: ${Colors.lightGrey};
   border-color: ${Colors.white} #808080 #808080 ${Colors.white};
   box-shadow: 0px 0px 1px ${Colors.black};
+`
+
+export const FancyText = css`
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: ${Colors.white};
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: black;
+`
+
+export const fadeIn = keyframes`
+    0% { opacity: 0 }
+    100% { opacity: 1 }
 `

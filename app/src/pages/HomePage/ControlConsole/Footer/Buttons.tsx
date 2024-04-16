@@ -2,10 +2,11 @@ import { FC } from 'react'
 import { Colors, PanelCSS } from '@/constants/styles'
 import { ImBrightnessContrast } from 'react-icons/im'
 import styled from 'styled-components'
+import { Spacer } from '@/components/Spacer'
 
 export const Buttons: FC = () => (
   <>
-    <Spacer $size="3px" />
+    <Spacer $size="3px" $vertical />
 
     <Button>
       <ButtonContent $highlightColor={Colors.red}>
@@ -17,12 +18,12 @@ export const Buttons: FC = () => (
       </ButtonContent>
     </Button>
 
-    <Spacer $size="12px" />
+    <Spacer $size="12px" $vertical />
     <Button>
       <ButtonContent $highlightColor={Colors.purple}>TAG</ButtonContent>
     </Button>
 
-    <Spacer $size="12px" />
+    <Spacer $size="12px" $vertical />
     <Button>
       <ButtonContent>
         CROSS
@@ -43,19 +44,19 @@ export const Buttons: FC = () => (
       <ButtonContent>TRXFR</ButtonContent>
     </Button>
 
-    <Spacer $size="12px" />
+    <Spacer $size="12px" $vertical />
     <Button>
       <ButtonContent>LOCAL EDIT</ButtonContent>
     </Button>
 
-    <Spacer $size="4px" />
+    <Spacer $size="4px" $vertical />
     <Button>
       <ButtonContent>
         <ImBrightnessContrast size={25} />
       </ButtonContent>
     </Button>
 
-    <Spacer $size="4px" />
+    <Spacer $size="4px" $vertical />
     <Button>
       <ButtonContent>
         NAS
@@ -65,10 +66,6 @@ export const Buttons: FC = () => (
     </Button>
   </>
 )
-
-const Spacer = styled.div<{ $size: string }>`
-  flex-basis: ${({ $size }) => $size};
-`
 
 const Button = styled.button`
   ${PanelCSS}

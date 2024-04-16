@@ -51,4 +51,9 @@ export class FlightsState {
     }
     return this.pendingFlights.get(flight.callsign)
   }
+
+  resetFlights() {
+    this.pendingFlights = new Map()
+    this.flights = new Map()
+  }
 }

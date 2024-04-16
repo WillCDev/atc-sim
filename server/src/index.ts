@@ -25,6 +25,12 @@ const pendingFlightsEndpoint = '/api/pendingFlights'
 const simEndpoint = '/api/sim'
 type MyResponse<T> = { data?: T; err?: string }
 
+app.use(function (_req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+  next()
+})
+
 app.get(
   flightsEndpoint,
   async (req: Request, res: Response<MyResponse<FlightData[]> | string>) => {
@@ -164,6 +170,7 @@ app.post(
 app.delete(simEndpoint, async (_: Request, res: Response<MyResponse<SimState>>) => {
   try {
     simState.resetSimData()
+    flightState.resetFlights()
     return res.status(200).json({ data: simState.getSimData() })
   } catch (err: any) {
     console.error(err)
