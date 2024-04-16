@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { MyResponse, SimState, SimStateSchema } from '../types'
-import { flightState } from '../flightsState'
-import { simState } from '../simState'
+import { flightState } from '../state/flightsState'
+import { simState } from '../state/simState'
 
 export const simRouter = express.Router({ mergeParams: true })
 

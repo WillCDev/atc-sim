@@ -1,4 +1,4 @@
-import { SimState } from './types'
+import { SimState } from '../types'
 
 const SimDefaults: SimState = {
   simType: 'tower',
@@ -8,8 +8,11 @@ const SimDefaults: SimState = {
   started: false,
 }
 
+type OnChangeHandler = (state: SimState) => void
+
 class Sim {
   private data: SimState
+  private onChangeHandler: OnChangeHandler | null = null
 
   constructor() {
     this.data = { ...SimDefaults }
@@ -22,10 +25,16 @@ class Sim {
   public setSimData(simData: SimState): void {
     console.log(simData)
     this.data = { ...simData }
+    this.onChangeHandler?.(this.data)
   }
 
   public resetSimData(): void {
     this.data = { ...SimDefaults }
+    this.onChangeHandler?.(this.data)
+  }
+
+  public onChange(cb: OnChangeHandler): void {
+    this.onChangeHandler = cb
   }
 }
 

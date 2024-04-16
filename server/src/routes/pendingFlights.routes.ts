@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { CreateFlightData, FlightData, FlightDataSchema, MyResponse } from '../types'
-import { flightState } from '../flightsState'
+import { flightState } from '../state/flightsState'
 
 export const pendingFlightsRouter = express.Router({ mergeParams: true })
 

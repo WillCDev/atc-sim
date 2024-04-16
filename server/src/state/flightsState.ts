@@ -1,4 +1,4 @@
-import { CreateFlightData, FlightData } from './types'
+import { CreateFlightData, FlightData } from '../types'
 
 class FlightsState {
   private pendingFlights: Map<string, FlightData> = new Map()
