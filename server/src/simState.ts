@@ -8,7 +8,7 @@ const SimDefaults: SimState = {
   started: false,
 }
 
-export class Sim {
+class Sim {
   private data: SimState
 
   constructor() {
@@ -28,3 +28,5 @@ export class Sim {
     this.data = { ...SimDefaults }
   }
 }
+
+export const simState = new Sim()

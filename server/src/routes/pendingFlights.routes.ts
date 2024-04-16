@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express'
-import ObjectsToCsv from 'objects-to-csv'
 import { CreateFlightData, FlightData, FlightDataSchema, MyResponse } from '../types'
 import { flightState } from '../flightsState'
 
