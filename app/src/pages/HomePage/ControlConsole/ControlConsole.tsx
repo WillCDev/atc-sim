@@ -3,16 +3,14 @@ import { useSimStore } from '@/store'
 import { FancyText, fadeIn } from '@/constants/styles'
 import { CenteredContent } from '@/components/CenteredContent'
 import { TowerControlConsole } from './TowerControlConsole'
-import { SimDataSync } from '../SimDataSync'
 
 export const ControlConsole = () => {
-  const isSimulatorRunning = useSimStore((state) => state.simStarted)
+  const isSimulatorRunning = useSimStore((state) => state.started)
   const simType = useSimStore((state) => state.simType)
 
   if (!isSimulatorRunning) {
     return (
       <LoadingWrapper>
-        <SimDataSync />
         <SimLoadingText>Waiting for SIM to start...</SimLoadingText>
       </LoadingWrapper>
     )

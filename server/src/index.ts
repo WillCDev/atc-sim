@@ -27,13 +27,14 @@ app.use('/api/sim', simRouter)
 
 simState.onChange((state) => {
   expressWs.getWss().clients.forEach((client: any) => {
-    client.send(JSON.stringify({ type: 'SIM', payload: state }))
+    client.send(JSON.stringify({ type: 'SIM_DATA', payload: state }))
   })
 })
 
 // @ts-ignore
-app.ws('/', () => {
+app.ws('/', (ws) => {
   console.log('ws connection')
+  ws.send(JSON.stringify({ type: 'SIM_DATA', payload: simState.getSimData() }))
 })
 
 app.listen(port, () => {

@@ -23,7 +23,6 @@ class Sim {
   }
 
   public setSimData(simData: SimState): void {
-    console.log(simData)
     this.data = { ...simData }
     this.onChangeHandler?.(this.data)
   }

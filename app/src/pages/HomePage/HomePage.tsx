@@ -60,12 +60,3 @@ export const HomePage: FC = () => {
 const Text = styled.span`
   ${FancyText}
 `
-
-// const Icon = styled.div`
-//   width: 150px;
-//   height: 150px;
-//   position: absolute;
-//   top: 20%;
-//   background-size: cover;
-//   background-image: url('/images/airport.png');
-// `
