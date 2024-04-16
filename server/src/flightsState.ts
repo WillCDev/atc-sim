@@ -1,6 +1,6 @@
 import { CreateFlightData, FlightData } from './types'
 
-export class FlightsState {
+class FlightsState {
   private pendingFlights: Map<string, FlightData> = new Map()
   private flights: Map<string, FlightData> = new Map()
 
@@ -57,3 +57,5 @@ export class FlightsState {
     this.flights = new Map()
   }
 }
+
+export const flightState = new FlightsState()

@@ -1,29 +1,30 @@
-import ObjectsToCsv from 'objects-to-csv'
 import express, { Express, Request, Response } from 'express'
-import { FlightsState } from './flightsState'
+
 import dotenv from 'dotenv'
 import {
   CreateFlightData,
   FlightData,
   FlightDataSchema,
+  MyResponse,
   SimState,
   SimStateSchema,
 } from './types'
 import { Sim } from './simState'
+import { flightsRouter } from './routes/flights.routes'
+import { flightState } from './flightsState'
 
 dotenv.config()
 
 const app: Express = express()
+// const expressWs = require('express-ws')(app)
+
 app.use(express.json())
 const port = process.env.PORT || 3001
 
-const flightState = new FlightsState()
 const simState = new Sim()
 
-const flightsEndpoint = '/api/flights'
 const pendingFlightsEndpoint = '/api/pendingFlights'
 const simEndpoint = '/api/sim'
-type MyResponse<T> = { data?: T; err?: string }
 
 app.use(function (_req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
@@ -31,27 +32,7 @@ app.use(function (_req, res, next) {
   next()
 })
 
-app.get(
-  flightsEndpoint,
-  async (req: Request, res: Response<MyResponse<FlightData[]> | string>) => {
-    try {
-      const flights = flightState.getFlights()
-      if (req.headers['accept'] === 'text/csv') {
-        return new ObjectsToCsv(flights.map(({ type, callsign }) => ({ type, callsign })))
-          .toString()
-          .then((csv: string) => {
-            res.setHeader('Content-Type', 'text/csv')
-            res.setHeader('Content-Disposition', 'attachment; filename="flights.csv"')
-            return res.status(200).send(csv)
-          })
-      }
-      return res.status(200).json({ data: flights })
-    } catch (err: any) {
-      console.error(err)
-      return res.status(500).json({ err: err.message })
-    }
-  }
-)
+app.use('/api/flights', flightsRouter)
 
 app.get(
   pendingFlightsEndpoint,
@@ -59,25 +40,6 @@ app.get(
     try {
       const flights = flightState.getPendingFlights()
       return res.status(200).json({ data: flights })
-    } catch (err: any) {
-      console.error(err)
-      return res.status(500).json({ err: err.message })
-    }
-  }
-)
-
-app.put(
-  flightsEndpoint,
-  async (
-    req: Request<{}, {}, CreateFlightData>,
-    res: Response<MyResponse<FlightData>>
-  ) => {
-    try {
-      const { success } = FlightDataSchema.safeParse(req.body)
-      if (!success) return res.status(400).json({ err: 'Invalid Flight Data' })
-
-      const flight = flightState.upsertFlight(req.body)
-      return res.status(201).json({ data: flight })
     } catch (err: any) {
       console.error(err)
       return res.status(500).json({ err: err.message })
@@ -100,24 +62,6 @@ app.put(
     } catch (err: any) {
       console.error(err)
       return res.status(500).json({ err: err.message })
-    }
-  }
-)
-
-app.delete(
-  `${flightsEndpoint}/:callsign`,
-  async (
-    req: Request<{ callsign: string }, {}, {}>,
-    res: Response<MyResponse<FlightData[]>>
-  ) => {
-    const id = req.params.callsign
-    try {
-      const flights = flightState.deleteFlight(id)
-
-      return res.status(200).json({ data: flights })
-    } catch (err) {
-      console.error(err)
-      return res.status(404).json({ err: 'Flight Not Found' })
     }
   }
 )

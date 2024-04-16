@@ -28,3 +28,5 @@ export const SimStateSchema = z.object({
 })
 
 export type SimState = z.infer<typeof SimStateSchema>
+
+export type MyResponse<T> = { data?: T; err?: string }
