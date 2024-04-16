@@ -8,19 +8,19 @@ import { FancyText } from '@/constants/styles'
 import styled from 'styled-components'
 import { Button } from '@/components/Button'
 import { Spacer } from '@/components/Spacer'
+import { postSimData } from '@/api/sim'
 
 export const HomePage: FC = () => {
   const selectedRole = useSimStore((state) => state.selectedRole)
   const setSelectedRole = useSimStore((state) => state.setSelectedRole)
-  const setSimData = useSimStore((state) => state.setSimData)
 
   const setDefaultSimData = () => {
-    setSimData({
+    postSimData({
       simType: 'tower',
       arrivalRunway: '23R',
       departureRunway: '23R',
       qnh: '1014',
-      simStarted: true,
+      started: true,
     })
     setSelectedRole('controller')
   }

@@ -10,9 +10,12 @@ interface Identifier {
 
 interface FlightsState {
   flights: Record<string, FlightStripData>
+  pendingFlights: Record<string, FlightStripData>
   flightLocations: Record<FlightStripLocation, string[]>
-  insertNewArrival: (flight: FlightStripData) => void
-  insertNewDeparture: (flight: FlightStripData) => void
+  removeFlight: (callsign: string) => void
+  upsertFlight: (flight: FlightStripData) => void
+  removePendingFlight: (callsign: string) => void
+  upsertPendingFlight: (flight: FlightStripData) => void
   selectedFlightStrip: (FlightStripData & { location: FlightStripLocation }) | null
   setSelectedFlightStrip: (
     strip: (FlightStripData & { location: FlightStripLocation }) | null
@@ -29,6 +32,7 @@ interface FlightsState {
 
 export const useFlightStore = create<FlightsState>((set) => ({
   flights: {},
+  pendingFlights: {},
   flightLocations: {
     [FlightStripLocation.PENDING_ARRIVALS]: [],
     [FlightStripLocation.AIRBORNE_DEPS]: [],
@@ -39,23 +43,56 @@ export const useFlightStore = create<FlightsState>((set) => ({
     [FlightStripLocation.HOLD_N]: [],
     [FlightStripLocation.UNASSIGNED]: [],
   },
-  insertNewArrival: (flight) => {
+  upsertFlight: (flight: FlightStripData) => {
     set((state) => {
-      state.flights[flight.callsign] = flight
-      const list = state.flightLocations[FlightStripLocation.PENDING_ARRIVALS]
-      state.flightLocations[FlightStripLocation.PENDING_ARRIVALS] = [
-        ...list,
-        flight.callsign,
-      ]
+      const existingFlight = state.flights[flight.callsign]
+      if (!existingFlight) {
+        state.flights[flight.callsign] = flight
 
+        const location =
+          flight.type === 'arrival'
+            ? FlightStripLocation.PENDING_ARRIVALS
+            : FlightStripLocation.HOLD_N
+
+        const list = state.flightLocations[location]
+        state.flightLocations[location] = [...list, flight.callsign]
+      } else {
+        state.flights[flight.callsign] = { ...existingFlight, ...flight }
+      }
       return { ...state }
     })
   },
-  insertNewDeparture: (flight) => {
+  removeFlight: (callsign) => {
     set((state) => {
-      state.flights[flight.callsign] = flight
-      const list = state.flightLocations[FlightStripLocation.HOLD_N]
-      state.flightLocations[FlightStripLocation.HOLD_N] = [...list, flight.callsign]
+      const strip = state.flights[callsign]
+      if (!strip) return state
+
+      delete state.flights[strip.callsign]
+      Object.entries(state.flightLocations).forEach(([location, callsigns]) => {
+        const stripIndex = callsigns.indexOf(strip.callsign)
+        if (stripIndex !== -1) {
+          state.flightLocations[location as FlightStripLocation] = callsigns.splice(
+            stripIndex,
+            1
+          )
+        }
+      })
+      return { ...state }
+    })
+  },
+  upsertPendingFlight: (flight) => {
+    set((state) => {
+      const existingFlight = state.pendingFlights[flight.callsign]
+      state.pendingFlights[flight.callsign] = { ...existingFlight, ...flight }
+      return { ...state }
+    })
+  },
+  removePendingFlight: (callsign) => {
+    set((state) => {
+      const strip = state.pendingFlights[callsign]
+      if (!strip) return state
+
+      delete state.pendingFlights[strip.callsign]
       return { ...state }
     })
   },

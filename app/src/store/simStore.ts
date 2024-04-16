@@ -11,7 +11,7 @@ export interface SimState {
 }
 
 interface SimActions {
-  setSimData: (data: Omit<SimState, 'selectedRole'>) => void
+  setSimData: (data: Partial<SimState>) => void
   setSelectedRole: (selectedRole: SimState['selectedRole']) => void
 }
 

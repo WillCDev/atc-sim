@@ -5,11 +5,9 @@ import * as Bays from './StripBays'
 import { Footer } from './Footer'
 import { HeaderMetrics } from './HeaderMetrics'
 import { HoldingPointSelectModal } from './HoldingPointSelectModal'
-import { AddMockTowerSimData } from './AddMockTowerSimData'
 
 export const TowerControlConsole: FC = () => (
   <>
-    <AddMockTowerSimData />
     <Layout.GridWrapper>
       <Layout.Header>
         <HeaderInfo />

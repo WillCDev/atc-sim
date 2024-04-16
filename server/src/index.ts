@@ -6,6 +6,7 @@ import { pendingFlightsRouter } from './routes/pendingFlights.routes'
 import { simRouter } from './routes/sim.routes'
 import { simState } from './state/simState'
 import e from 'express'
+import { flightState } from './state/flightsState'
 
 dotenv.config()
 
@@ -31,10 +32,26 @@ simState.onChange((state) => {
   })
 })
 
+flightState.onFlightChange((data) => {
+  expressWs.getWss().clients.forEach((client: any) => {
+    client.send(JSON.stringify({ type: 'FLIGHT', ...data }))
+  })
+})
+
+flightState.onPendingFlightChange((data) => {
+  expressWs.getWss().clients.forEach((client: any) => {
+    client.send(JSON.stringify({ type: 'PENDING_FLIGHT', ...data }))
+  })
+})
+
 // @ts-ignore
 app.ws('/', (ws) => {
   console.log('ws connection')
   ws.send(JSON.stringify({ type: 'SIM_DATA', payload: simState.getSimData() }))
+  ws.send(JSON.stringify({ type: 'FLIGHTS', payload: flightState.getFlights() }))
+  ws.send(
+    JSON.stringify({ type: 'PENDING_FLIGHTS', payload: flightState.getPendingFlights() })
+  )
 })
 
 app.listen(port, () => {
