@@ -1,4 +1,5 @@
 import { SimState } from '../types'
+import { flightState } from './flightsState'
 
 const SimDefaults: SimState = {
   simType: 'tower',
@@ -30,6 +31,7 @@ class Sim {
   public resetSimData(): void {
     this.data = { ...SimDefaults }
     this.onChangeHandler?.(this.data)
+    flightState.resetFlights()
   }
 
   public onChange(cb: OnChangeHandler): void {

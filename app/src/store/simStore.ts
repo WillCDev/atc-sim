@@ -5,7 +5,7 @@ export interface SimState {
   simType: 'tower' | 'radar'
   arrivalRunway: string | null
   departureRunway: string | null
-  qnh: string
+  qnh: number
   selectedRole: 'controller' | 'coordinator' | null
   started: boolean
 }
@@ -25,7 +25,7 @@ export const useSimStore = create<SimState & SimActions>()(
       simType: 'tower',
       arrivalRunway: null,
       departureRunway: null,
-      qnh: '1014',
+      qnh: 1014,
       selectedRole: null,
       started: false,
       setSimData: (data) => set((state) => ({ ...state, ...data })),

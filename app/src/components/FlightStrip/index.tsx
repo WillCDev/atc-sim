@@ -3,6 +3,7 @@ import { ArrivalStrip } from './ArrivalStrip'
 import { DepartureStrip } from './DepartureStrip'
 import { useFlightStore } from '@/store'
 import { FlightStripLocation } from '@/types'
+import { deleteFlight } from '@/api/flights'
 
 interface Props {
   callsign: string
@@ -10,14 +11,15 @@ interface Props {
 }
 
 const FlightStripBase: FC<Props> = ({ callsign, location }) => {
-  const data = useFlightStore((state) => state.flights[callsign])
-  const removeStrip = useFlightStore((state) => state.removeStrip)
+  const dataSource =
+    location === FlightStripLocation.UNASSIGNED ? 'pendingFlights' : 'flights'
+  const data = useFlightStore((state) => state[dataSource][callsign])
 
   useEffect(() => {
     if (data?.isTransfered) {
       const random1To4 = Math.floor(Math.random() * 4) + 1
       const timer = setTimeout(() => {
-        removeStrip({ callsign: data.callsign, location: location })
+        deleteFlight(data.callsign)
         clearTimeout(timer)
       }, random1To4 * 1000)
 

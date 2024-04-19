@@ -11,7 +11,13 @@ flightsRouter.get(
     try {
       const flights = flightState.getFlights()
       if (req.headers['accept'] === 'text/csv') {
-        return new ObjectsToCsv(flights.map(({ type, callsign }) => ({ type, callsign })))
+        return new ObjectsToCsv(
+          flights.map(({ type, callsign, holdingPoint }) => ({
+            type,
+            callsign,
+            holdingPoint,
+          }))
+        )
           .toString()
           .then((csv: string) => {
             res.setHeader('Content-Type', 'text/csv')

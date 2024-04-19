@@ -1,12 +1,6 @@
 import axios from 'axios'
-
-import { httpEndpoint } from './api'
+import { Response, httpEndpoint } from './api'
 import { SimState } from '@/store'
-
-interface Response<T> {
-  data: T
-  error?: string
-}
 
 interface SimApiResponse {
   simType: 'tower' | 'radar'
@@ -31,7 +25,7 @@ export const postSimData = async (
 }
 
 export const endSim = async (): Promise<Response<void>> => {
-  const response = await axios.delete(`${httpEndpoint}/api/sim`)
+  const response = await axios.post(`${httpEndpoint}/api/sim/reset`)
 
   return response.data
 }

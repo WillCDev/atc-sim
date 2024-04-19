@@ -6,6 +6,7 @@ import { useFlightStore, useSimStore } from '@/store'
 import { Content, Panel, TransferOverlay, Value } from '../FlightStrip.styles'
 import { FlightStripData, FlightStripLocation } from '@/types'
 import { useADepartureStripControlRules } from './useDepartureStripControlRules'
+import { CoordinatorButtons } from '../CoordinatorButtons'
 
 interface Props {
   data: FlightStripData
@@ -15,7 +16,7 @@ interface Props {
 export const DepartureStrip: FC<Props> = ({ data, location }) => {
   const isDualRunway = useSimStore((state) => state.isDualRunway)
 
-  const { canBeTranfered, canTimeStamp, canBeClearedForDeparture } =
+  const { canBeTranfered, canTimeStamp, canBeClearedForDeparture, canBeSelected } =
     useADepartureStripControlRules(data, location)
 
   const transerStrip = useFlightStore((state) => state.transferFlightStrip)
@@ -43,7 +44,7 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
   }
 
   return (
-    <Panel>
+    <Container>
       <ContentGrid $color={Colors.blue}>
         <Value style={{ gridArea: '1 / 1 / 3 / 2' }}>{data.departureTime}</Value>
 
@@ -51,7 +52,7 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
           style={{ gridArea: '1 / 2 / 3 / 3', padding: '0 5px' }}
           data={data}
           location={location}
-          disabled={data.isTransfered}
+          disabled={!canBeSelected}
         />
 
         <Value style={{ gridArea: '1 / 3 / 2 / 4' }}>{data.classification}</Value>
@@ -102,11 +103,16 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
         </Value>
       </ContentGrid>
       {data.isTransfered && <TransferOverlay onClick={(e) => e.stopPropagation()} />}
-    </Panel>
+      {location === FlightStripLocation.UNASSIGNED && <CoordinatorButtons data={data} />}
+    </Container>
   )
 }
 
 const ContentGrid = styled(Content)`
   grid-template-columns: 1.5fr 2.5fr 2fr 2fr 1fr 1fr 1fr 1.5fr;
   grid-template-rows: 1fr 1fr;
+`
+
+const Container = styled(Panel)`
+  display: flex;
 `

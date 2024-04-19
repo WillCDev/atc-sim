@@ -6,6 +6,7 @@ import { useFlightStore, useSimStore } from '@/store'
 import { Content, Panel, TransferOverlay, Value } from '../FlightStrip.styles'
 import { FlightStripData, FlightStripLocation } from '@/types'
 import { useArrivalStripControlRules } from './useArrivalStripControlRules'
+import { CoordinatorButtons } from '../CoordinatorButtons'
 
 interface Props {
   data: FlightStripData
@@ -35,7 +36,7 @@ export const ArrivalStrip: FC<Props> = ({ data, location }) => {
   }
 
   return (
-    <Panel>
+    <Container>
       <ContentGrid $color={Colors.orange}>
         <Value style={{ gridArea: '1 / 1 / 3 / 2' }} />
         <Value style={{ gridArea: '1 / 2 / 3 / 3' }} onClick={handleTimeStamp}>
@@ -87,11 +88,16 @@ export const ArrivalStrip: FC<Props> = ({ data, location }) => {
         </Value>
       </ContentGrid>
       {data.isTransfered && <TransferOverlay />}
-    </Panel>
+      {location === FlightStripLocation.UNASSIGNED && <CoordinatorButtons data={data} />}
+    </Container>
   )
 }
 
 const ContentGrid = styled(Content)`
   grid-template-columns: 0.75fr 1fr 2.5fr 0.7fr 0.5fr 1fr 1.5fr 1fr 1fr 1.5fr 1.2fr;
   grid-template-rows: 1fr 1fr;
+`
+
+const Container = styled(Panel)`
+  display: flex;
 `

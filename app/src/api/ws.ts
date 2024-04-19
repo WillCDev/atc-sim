@@ -20,7 +20,8 @@ interface DeletedFlightMessage {
 }
 
 interface BatchFlightsMessage {
-  type: 'FLIGHTS' | 'PENDING_FLIGHTS'
+  type: 'FLIGHT' | 'PENDING_FLIGHT'
+  action: 'BATCH'
   payload: FlightStripData[]
 }
 
@@ -65,6 +66,9 @@ class WebsocketServer {
       if (message.action == 'DELETE') {
         this.broadcastFlightRemoval(message.payload)
       }
+      if (message.action == 'BATCH') {
+        this.broadcastFlightBatch(message.payload)
+      }
     } else if (message.type == 'PENDING_FLIGHT') {
       if (message.action == 'UPSERT') {
         this.broadcastPendingFlightChange(message.payload)
@@ -72,10 +76,9 @@ class WebsocketServer {
       if (message.action == 'DELETE') {
         this.broadcastPendingFlightRemoval(message.payload)
       }
-    } else if (message.type == 'FLIGHTS') {
-      this.broadcastFlightBatch(message.payload)
-    } else if (message.type == 'PENDING_FLIGHTS') {
-      this.broadcastPendingFlightBatch(message.payload)
+      if (message.action == 'BATCH') {
+        this.broadcastPendingFlightBatch(message.payload)
+      }
     }
   }
 

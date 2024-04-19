@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { InfoStrip } from '@/components/InfoStrip'
-import { StripBay } from './StripBay'
+import { StripBay } from '../../../../components/StripBay'
 import { useFlightStore, useSimStore } from '@/store'
 import { FlightStripLocation } from '@/types'
 

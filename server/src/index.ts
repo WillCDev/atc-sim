@@ -1,26 +1,27 @@
 import express from 'express'
 import dotenv from 'dotenv'
+import cors from 'cors'
 
 import { flightsRouter } from './routes/flights.routes'
 import { pendingFlightsRouter } from './routes/pendingFlights.routes'
 import { simRouter } from './routes/sim.routes'
 import { simState } from './state/simState'
-import e from 'express'
 import { flightState } from './state/flightsState'
 
 dotenv.config()
 
 const app = express()
+app.use(cors())
 const expressWs = require('express-ws')(app)
-
-app.use(express.json())
 const port = process.env.PORT || 3001
 
 app.use(function (_req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST')
   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
   next()
 })
+app.use(express.json())
 
 app.use('/api/flights', flightsRouter)
 app.use('/api/pendingFlights', pendingFlightsRouter)
