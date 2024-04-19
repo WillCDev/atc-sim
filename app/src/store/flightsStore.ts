@@ -31,26 +31,10 @@ interface FlightsState {
   removeStrip: (arg: Identifier) => void
 }
 
-export const useFlightStore = create<FlightsState>((set) => ({
+const defaultState = {
   flights: {},
   pendingFlights: {},
-  reset: () => {
-    set({
-      flights: {},
-      pendingFlights: {},
-      flightLocations: {
-        [FlightStripLocation.PENDING_ARRIVALS]: [],
-        [FlightStripLocation.AIRBORNE_DEPS]: [],
-        [FlightStripLocation.ARRIVAL_SEQ]: [],
-        [FlightStripLocation.RUNWAY_1]: [],
-        [FlightStripLocation.R1_LOOP]: [],
-        [FlightStripLocation.HOLD_S]: [],
-        [FlightStripLocation.HOLD_N]: [],
-        [FlightStripLocation.UNASSIGNED]: [],
-      },
-    })
-  },
-  flightLocations: {
+  flightLocations: <Record<FlightStripLocation, string[]>>{
     [FlightStripLocation.PENDING_ARRIVALS]: [],
     [FlightStripLocation.AIRBORNE_DEPS]: [],
     [FlightStripLocation.ARRIVAL_SEQ]: [],
@@ -59,6 +43,13 @@ export const useFlightStore = create<FlightsState>((set) => ({
     [FlightStripLocation.HOLD_S]: [],
     [FlightStripLocation.HOLD_N]: [],
     [FlightStripLocation.UNASSIGNED]: [],
+  },
+} as const
+
+export const useFlightStore = create<FlightsState>((set) => ({
+  ...defaultState,
+  reset: () => {
+    set({ ...defaultState })
   },
   upsertFlight: (flight: FlightStripData) => {
     set((state) => {
