@@ -9,6 +9,7 @@ export const WsSync: FC = () => {
   const upsertPendingFlight = useFlightStore((state) => state.upsertPendingFlight)
   const removeFlight = useFlightStore((state) => state.removeFlight)
   const removePendingFlight = useFlightStore((state) => state.removePendingFlight)
+  const resetStore = useFlightStore((state) => state.reset)
 
   useEffect(() => {
     WSServer.onSimChange(setSimData)
@@ -16,6 +17,7 @@ export const WsSync: FC = () => {
     WSServer.onPendingFlightChange(upsertPendingFlight)
     WSServer.onFlightRemoval(removeFlight)
     WSServer.onPendingFlightRemoval(removePendingFlight)
+    WSServer.onReset(resetStore)
 
     const handleFlightBatch = (flights: FlightStripData[]) => {
       flights.forEach(upsertFlight)
@@ -35,6 +37,7 @@ export const WsSync: FC = () => {
       WSServer.unregisterPendingFlightRemoval(removePendingFlight)
       WSServer.unregisterFlightBatch(handleFlightBatch)
       WSServer.unregisterPendingFlightBatch(handlePendingFlightBatch)
+      WSServer.unregisterReset(resetStore)
     }
   }, [])
 

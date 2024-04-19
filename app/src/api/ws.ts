@@ -7,6 +7,10 @@ interface SimMessage {
   payload: Partial<SimState>
 }
 
+interface ResetMessage {
+  type: 'RESET'
+}
+
 interface FlightMessage {
   type: 'FLIGHT' | 'PENDING_FLIGHT'
   action: 'UPSERT'
@@ -25,7 +29,12 @@ interface BatchFlightsMessage {
   payload: FlightStripData[]
 }
 
-type WsMessage = SimMessage | FlightMessage | DeletedFlightMessage | BatchFlightsMessage
+type WsMessage =
+  | SimMessage
+  | FlightMessage
+  | DeletedFlightMessage
+  | BatchFlightsMessage
+  | ResetMessage
 
 class WebsocketServer {
   private ws: WebSocket
@@ -37,6 +46,7 @@ class WebsocketServer {
     new Set()
   private pendingFlightChangeHandlers: Set<(state: FlightStripData) => void> = new Set()
   private pendingFlightRemovalHandlers: Set<(callsign: string) => void> = new Set()
+  private resetHandlers: Set<() => void> = new Set()
 
   constructor() {
     this.ws = new WebSocket(wsEndpoint)
@@ -55,10 +65,13 @@ class WebsocketServer {
     }
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   private handleMessage(message: WsMessage) {
     if (message.type == 'SIM_DATA') {
-      this.broadcastSimChange(message.payload)
-    } else if (message.type == 'FLIGHT') {
+      return this.broadcastSimChange(message.payload)
+    }
+
+    if (message.type == 'FLIGHT') {
       if (message.action == 'UPSERT') {
         console.log('broadcasting flight change', message.payload)
         this.broadcastFlightChange(message.payload)
@@ -69,7 +82,10 @@ class WebsocketServer {
       if (message.action == 'BATCH') {
         this.broadcastFlightBatch(message.payload)
       }
-    } else if (message.type == 'PENDING_FLIGHT') {
+      return
+    }
+
+    if (message.type == 'PENDING_FLIGHT') {
       if (message.action == 'UPSERT') {
         this.broadcastPendingFlightChange(message.payload)
       }
@@ -79,6 +95,11 @@ class WebsocketServer {
       if (message.action == 'BATCH') {
         this.broadcastPendingFlightBatch(message.payload)
       }
+      return
+    }
+
+    if (message.type == 'RESET') {
+      return this.resetHandlers.forEach((handler) => handler())
     }
   }
 
@@ -164,6 +185,14 @@ class WebsocketServer {
 
   public unregisterPendingFlightRemoval(handler: (callsign: string) => void) {
     this.pendingFlightRemovalHandlers.delete(handler)
+  }
+
+  public onReset(handler: () => void) {
+    this.resetHandlers.add(handler)
+  }
+
+  public unregisterReset(handler: () => void) {
+    this.resetHandlers.delete(handler)
   }
 }
 

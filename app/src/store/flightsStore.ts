@@ -11,6 +11,7 @@ interface Identifier {
 interface FlightsState {
   flights: Record<string, FlightStripData>
   pendingFlights: Record<string, FlightStripData>
+  reset: () => void
   flightLocations: Record<FlightStripLocation, string[]>
   removeFlight: (callsign: string) => void
   upsertFlight: (flight: FlightStripData) => void
@@ -33,6 +34,22 @@ interface FlightsState {
 export const useFlightStore = create<FlightsState>((set) => ({
   flights: {},
   pendingFlights: {},
+  reset: () => {
+    set({
+      flights: {},
+      pendingFlights: {},
+      flightLocations: {
+        [FlightStripLocation.PENDING_ARRIVALS]: [],
+        [FlightStripLocation.AIRBORNE_DEPS]: [],
+        [FlightStripLocation.ARRIVAL_SEQ]: [],
+        [FlightStripLocation.RUNWAY_1]: [],
+        [FlightStripLocation.R1_LOOP]: [],
+        [FlightStripLocation.HOLD_S]: [],
+        [FlightStripLocation.HOLD_N]: [],
+        [FlightStripLocation.UNASSIGNED]: [],
+      },
+    })
+  },
   flightLocations: {
     [FlightStripLocation.PENDING_ARRIVALS]: [],
     [FlightStripLocation.AIRBORNE_DEPS]: [],

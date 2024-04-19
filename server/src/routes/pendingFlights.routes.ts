@@ -43,7 +43,6 @@ pendingFlightsRouter.delete(
     res: Response<MyResponse<FlightData[]>>
   ) => {
     const id = req.params.callsign
-    console.log(id)
     try {
       const flights = flightState.deletePendingFlight(id)
 

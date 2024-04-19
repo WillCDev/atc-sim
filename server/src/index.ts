@@ -33,6 +33,12 @@ simState.onChange((state) => {
   })
 })
 
+simState.onReset((state) => {
+  expressWs.getWss().clients.forEach((client: any) => {
+    client.send(JSON.stringify({ type: 'RESET', payload: state }))
+  })
+})
+
 flightState.onFlightChange((data) => {
   expressWs.getWss().clients.forEach((client: any) => {
     client.send(JSON.stringify({ type: 'FLIGHT', ...data }))
@@ -49,9 +55,15 @@ flightState.onPendingFlightChange((data) => {
 app.ws('/', (ws) => {
   console.log('ws connection')
   ws.send(JSON.stringify({ type: 'SIM_DATA', payload: simState.getSimData() }))
-  ws.send(JSON.stringify({ type: 'FLIGHTS', payload: flightState.getFlights() }))
   ws.send(
-    JSON.stringify({ type: 'PENDING_FLIGHTS', payload: flightState.getPendingFlights() })
+    JSON.stringify({ type: 'FLIGHT', action: 'BATCH', payload: flightState.getFlights() })
+  )
+  ws.send(
+    JSON.stringify({
+      type: 'PENDING_FLIGHT',
+      action: 'BATCH',
+      payload: flightState.getPendingFlights(),
+    })
   )
 })
 

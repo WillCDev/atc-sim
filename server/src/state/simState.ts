@@ -14,6 +14,7 @@ type OnChangeHandler = (state: SimState) => void
 class Sim {
   private data: SimState
   private onChangeHandler: OnChangeHandler | null = null
+  private onResetHandler: OnChangeHandler | null = null
 
   constructor() {
     this.data = { ...SimDefaults }
@@ -31,11 +32,16 @@ class Sim {
   public resetSimData(): void {
     this.data = { ...SimDefaults }
     this.onChangeHandler?.(this.data)
+    this.onResetHandler?.(this.data)
     flightState.resetFlights()
   }
 
   public onChange(cb: OnChangeHandler): void {
     this.onChangeHandler = cb
+  }
+
+  public onReset(cb: OnChangeHandler): void {
+    this.onResetHandler = cb
   }
 }
 
