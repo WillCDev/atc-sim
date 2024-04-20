@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
-    "build-gh": "vite build --mode gh",
+    "build": "vite build --base=./",
+    "build-gh": "vite build --base=./ --mode gh",
     "predeploy": "npm run build-gh",
     "deploy": "gh-pages -d dist",
     "lint": "eslint --max-warnings 0 \"src/**/*.{js,jsx,ts,tsx}\" --fix",
