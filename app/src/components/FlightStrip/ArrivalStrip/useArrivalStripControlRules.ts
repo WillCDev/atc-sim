@@ -1,4 +1,3 @@
-import { useSimStore } from '@/store'
 import { FlightStripData, FlightStripLocation } from '@/types'
 
 const getCanbeTransfered = (data: FlightStripData, location: FlightStripLocation) => {
@@ -6,12 +5,7 @@ const getCanbeTransfered = (data: FlightStripData, location: FlightStripLocation
   return !![FlightStripLocation.HOLD_N, FlightStripLocation.RUNWAY_1].includes(location)
 }
 
-const getCanBeTimeStamped = (
-  data: FlightStripData,
-  location: FlightStripLocation,
-  isDualRunway: boolean
-) => {
-  if (isDualRunway) return false
+const getCanBeTimeStamped = (data: FlightStripData, location: FlightStripLocation) => {
   if (data.arrivalTime !== null) return false
   if (data.isTransfered) return false
 
@@ -22,10 +16,8 @@ export const useArrivalStripControlRules = (
   data: FlightStripData,
   location: FlightStripLocation
 ) => {
-  const isDualRunway = useSimStore((state) => state.isDualRunway)
-
   return {
     canBeTranfered: getCanbeTransfered(data, location),
-    canTimeStamp: getCanBeTimeStamped(data, location, isDualRunway),
+    canTimeStamp: getCanBeTimeStamped(data, location),
   }
 }

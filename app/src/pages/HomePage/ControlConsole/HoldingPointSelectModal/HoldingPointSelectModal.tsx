@@ -79,6 +79,6 @@ const ModalContent = styled.div`
   width: ${width}px;
   height: ${height}px;
   pointer-events: all;
-  background-image: url('/images/holdingpoint-select.jpeg');
+  background-image: url('images/holdingpoint-select.jpeg');
   background-size: contain;
 `

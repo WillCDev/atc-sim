@@ -24,7 +24,7 @@ export const ControlConsole = () => {
 }
 
 const LoadingWrapper = styled(CenteredContent)`
-  background-image: url('/images/loading_plane.gif');
+  background-image: url('images/loading_plane.gif');
   background-size: cover;
   background-position: center;
   animation: ${fadeIn} 500ms ease-in-out;

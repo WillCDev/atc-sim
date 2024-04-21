@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import styled from 'styled-components'
 import { Colors } from '@/constants/styles'
 import { CallSign } from '../CallSign'
@@ -11,9 +11,10 @@ import { CoordinatorButtons } from '../CoordinatorButtons'
 interface Props {
   data: FlightStripData
   location: FlightStripLocation
+  handleRemoveFlight: (callsign: string) => void
 }
 
-export const DepartureStrip: FC<Props> = ({ data, location }) => {
+export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }) => {
   const isDualRunway = useSimStore((state) => state.isDualRunway)
 
   const { canBeTranfered, canTimeStamp, canBeClearedForDeparture, canBeSelected } =
@@ -42,6 +43,10 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
   const onSelectHoldingPoint = () => {
     selectHoldingPoint(data.callsign)
   }
+
+  useEffect(() => {
+    if (data.isTransfered) handleRemoveFlight(data.callsign)
+  }, [data.isTransfered])
 
   return (
     <Container>

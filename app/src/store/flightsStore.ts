@@ -31,25 +31,26 @@ interface FlightsState {
   removeStrip: (arg: Identifier) => void
 }
 
-const defaultState = {
-  flights: {},
-  pendingFlights: {},
-  flightLocations: <Record<FlightStripLocation, string[]>>{
-    [FlightStripLocation.PENDING_ARRIVALS]: [],
-    [FlightStripLocation.AIRBORNE_DEPS]: [],
-    [FlightStripLocation.ARRIVAL_SEQ]: [],
-    [FlightStripLocation.RUNWAY_1]: [],
-    [FlightStripLocation.R1_LOOP]: [],
-    [FlightStripLocation.HOLD_S]: [],
-    [FlightStripLocation.HOLD_N]: [],
-    [FlightStripLocation.UNASSIGNED]: [],
-  },
-} as const
+const getDefaultState = () =>
+  ({
+    flights: {},
+    pendingFlights: {},
+    flightLocations: <Record<FlightStripLocation, string[]>>{
+      [FlightStripLocation.PENDING_ARRIVALS]: [],
+      [FlightStripLocation.AIRBORNE_DEPS]: [],
+      [FlightStripLocation.ARRIVAL_SEQ]: [],
+      [FlightStripLocation.RUNWAY_1]: [],
+      [FlightStripLocation.R1_LOOP]: [],
+      [FlightStripLocation.HOLD_S]: [],
+      [FlightStripLocation.HOLD_N]: [],
+      [FlightStripLocation.UNASSIGNED]: [],
+    },
+  } as const)
 
 export const useFlightStore = create<FlightsState>((set) => ({
-  ...defaultState,
+  ...getDefaultState(),
   reset: () => {
-    set({ ...defaultState })
+    set({ ...getDefaultState() })
   },
   upsertFlight: (flight: FlightStripData) => {
     set((state) => {
@@ -76,13 +77,13 @@ export const useFlightStore = create<FlightsState>((set) => ({
       if (!strip) return state
 
       delete state.flights[strip.callsign]
+
       Object.entries(state.flightLocations).forEach(([location, callsigns]) => {
         const stripIndex = callsigns.indexOf(strip.callsign)
         if (stripIndex !== -1) {
-          state.flightLocations[location as FlightStripLocation] = callsigns.splice(
-            stripIndex,
-            1
-          )
+          state.flightLocations[location as FlightStripLocation] = state.flightLocations[
+            location as FlightStripLocation
+          ].filter((cs) => cs !== callsign)
         }
       })
       return { ...state }
