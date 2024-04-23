@@ -2,21 +2,19 @@ import { FC, useEffect } from 'react'
 import styled from 'styled-components'
 import { Colors } from '@/constants/styles'
 import { CallSign } from '../CallSign'
-import { useFlightStore, useSimStore } from '@/store'
+import { useFlightStore } from '@/store'
 import { Content, StripContainer, TransferOverlay, Value } from '../FlightStrip.styles'
 import { FlightStripData, FlightStripLocation } from '@/types'
 import { useADepartureStripControlRules } from './useDepartureStripControlRules'
 import { CoordinatorButtons } from '../CoordinatorButtons'
+import { deleteFlight } from '@/api/flights'
 
 interface Props {
   data: FlightStripData
   location: FlightStripLocation
-  handleRemoveFlight: (callsign: string, immediate?: true) => void
 }
 
-export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }) => {
-  const isDualRunway = useSimStore((state) => state.isDualRunway)
-
+export const DepartureStrip: FC<Props> = ({ data, location }) => {
   const { canBeTranfered, canTimeStamp, canBeClearedForDeparture, canBeSelected } =
     useADepartureStripControlRules(data, location)
 
@@ -52,15 +50,12 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
   }
 
   const handleSidClick = () => {
-    if (isDualRunway) return handleTransfer()
     if (!data.isTransfered) return handleTimeStamp()
-    if (data.isTransfered) return handleRemoveFlight(data.callsign, true)
+    if (data.isTransfered) return deleteFlight(data.callsign)
   }
 
   const handleQsyClick = () => {
-    if (isDualRunway) return
     if (!data.isTransfered) return handleTransfer()
-    handleRemoveFlight(data.callsign)
   }
 
   useEffect(() => {
@@ -142,7 +137,7 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
           $color={highlightClearedFOrDeparture ? Colors.green : Colors.white}
           onClick={handleSidClick}
         >
-          {data.isTransfered ? 'HIDE' : data.sid}
+          {data.sid}
         </Value>
       </ContentGrid>
       {data.isTransfered && <TransferOverlay />}
