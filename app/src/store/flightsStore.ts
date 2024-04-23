@@ -22,7 +22,8 @@ interface FlightsState {
     strip: (FlightStripData & { location: FlightStripLocation }) | null
   ) => void
   moveFlightStrip: (args: { callsign?: string; location: FlightStripLocation }) => void
-  transferFlightStrip: (callsign: string) => void
+  transferFlightStrip: (callsign: string, isTransfered: boolean) => void
+  continueApproach: (callsign: string) => void
   timeStampStrip: (callsign: string) => void
   stripToSelectHoldingPoint: string | null
   setStripToSelectHoldingPoint: (callsign: string | null) => void
@@ -145,12 +146,12 @@ export const useFlightStore = create<FlightsState>((set) => ({
         )
       })
     },
-  transferFlightStrip: (callsign) => {
+  transferFlightStrip: (callsign, isTransfered) => {
     set((state) => {
       const strip = state.flights[callsign]
       if (!strip) return state
 
-      state.flights[strip.callsign] = { ...strip, isTransfered: true }
+      state.flights[strip.callsign] = { ...strip, isTransfered }
       return { ...state }
     })
   },
@@ -165,6 +166,15 @@ export const useFlightStore = create<FlightsState>((set) => ({
       }
       state.flights[strip.callsign] = { ...strip }
 
+      return { ...state }
+    })
+  },
+  continueApproach: (callsign) => {
+    set((state) => {
+      const strip = state.flights[callsign]
+      if (!strip) return state
+
+      state.flights[strip.callsign] = { ...strip, canContinueApproach: true }
       return { ...state }
     })
   },

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { InfoStrip } from '../../../components/InfoStrip'
+import { InfoStrip } from '@/components/InfoStrip'
 
 export const HeaderInfo: FC = () => (
   <InfoStrip

@@ -20,6 +20,7 @@ export const CallSign: FC<Props> = ({ style, data, location, disabled }) => {
   const isSelected = selectedCallsign === data.callsign
 
   const handleClick = () => {
+    console.log('CallSign handleClick', data.callsign, location, selectedCallsign)
     if (disabled) return
     if (!selectedCallsign) {
       return selectCallSign({ ...data, location })

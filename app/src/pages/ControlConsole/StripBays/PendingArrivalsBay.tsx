@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { InfoStrip } from '@/components/InfoStrip'
 import { useFlightStore } from '@/store'
-import { StripBay } from '../../../../components/StripBay'
+import { StripBay } from '@/components/StripBay'
 import { FlightStripLocation } from '@/types'
 
 export const PendingArrivalsBay: FC = () => {

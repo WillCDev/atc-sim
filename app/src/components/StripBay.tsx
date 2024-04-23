@@ -38,7 +38,7 @@ export const StripBay: FC<StripBayProps> = ({
 
   return (
     <Wrapper>
-      <div style={{ flex: 0 }}>{children}</div>
+      <div style={{ flex: 0, position: 'sticky', top: 0, zIndex: 1 }}>{children}</div>
       <ClickableArea onClick={handleClick} $enabled={canReceiveStrip} />
       <Bay>
         {strips.map((strip) => (
@@ -53,6 +53,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: auto;
 `
 
 const Bay = styled.div`

@@ -37,7 +37,10 @@ type WsMessage =
   | ResetMessage
 
 class WebsocketServer {
-  private ws: WebSocket
+  private ws: WebSocket | null = null
+  private initalized = false
+  private connectionTries = 0
+  private maxConnectionTries = 5
   private simChangeHandlers: Set<(state: Partial<SimState>) => void> = new Set()
   private flightChangeHandlers: Set<(state: FlightStripData) => void> = new Set()
   private flightRemovalHandlers: Set<(callsign: string) => void> = new Set()
@@ -47,12 +50,15 @@ class WebsocketServer {
   private pendingFlightChangeHandlers: Set<(state: FlightStripData) => void> = new Set()
   private pendingFlightRemovalHandlers: Set<(callsign: string) => void> = new Set()
   private resetHandlers: Set<() => void> = new Set()
+  private onopenHandlers: Set<(connected: boolean) => void> = new Set()
+  private oncloseHandlers: Set<(connected: boolean) => void> = new Set()
 
-  constructor() {
+  public init() {
+    this.initalized = true
     this.ws = new WebSocket(wsEndpoint)
-
     this.ws.onopen = () => {
       console.log('Connected to ws')
+      this.onopenHandlers.forEach((handler) => handler(true))
     }
 
     this.ws.onmessage = (message) => {
@@ -62,6 +68,29 @@ class WebsocketServer {
 
     this.ws.onclose = () => {
       console.log('Disconnected from ws')
+      this.oncloseHandlers.forEach((handler) => handler(false))
+      setTimeout(() => this.reconnect(), 1000)
+    }
+  }
+
+  public close() {
+    this.initalized = false
+    this.ws?.close()
+    this.ws = null
+  }
+
+  public isInitalized() {
+    return this.initalized
+  }
+
+  private reconnect() {
+    this.close()
+
+    if (this.connectionTries < this.maxConnectionTries) {
+      this.connectionTries++
+      this.init()
+    } else {
+      console.error('Max connection tries reached')
     }
   }
 
@@ -193,6 +222,22 @@ class WebsocketServer {
 
   public unregisterReset(handler: () => void) {
     this.resetHandlers.delete(handler)
+  }
+
+  public onConnected(handler: (connected: boolean) => void) {
+    this.onopenHandlers.add(handler)
+  }
+
+  public unregisterConnected(handler: (connected: boolean) => void) {
+    this.onopenHandlers.delete(handler)
+  }
+
+  public onDisconnected(handler: (connected: boolean) => void) {
+    this.oncloseHandlers.add(handler)
+  }
+
+  public unregisterDisconnected(handler: (connected: boolean) => void) {
+    this.oncloseHandlers.delete(handler)
   }
 }
 

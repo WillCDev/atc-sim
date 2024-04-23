@@ -1,6 +1,7 @@
 interface FlightStripControlProps {
   isTransfered: boolean // False by default, greyed out once transfered
   isClearedForDeparture: boolean // False by default, green once cleared
+  canContinueApproach: boolean // False by default, C once cleared
 }
 
 export enum FlightStripLocation {

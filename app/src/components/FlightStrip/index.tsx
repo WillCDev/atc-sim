@@ -15,20 +15,20 @@ const FlightStripBase: FC<Props> = ({ callsign, location }) => {
     location === FlightStripLocation.UNASSIGNED ? 'pendingFlights' : 'flights'
   const data = useFlightStore((state) => state[dataSource][callsign])
 
-  const removeFlight = (callsign: string) => {
+  const removeFlight = (callsign: string, immediate?: true) => {
     const random1To4 = Math.floor(Math.random() * 4) + 1
-    const timer = setTimeout(() => {
-      console.log('FlightStripBase removeFlight', callsign)
-      deleteFlight(callsign)
-      clearTimeout(timer)
-    }, random1To4 * 1000)
+    const timer = setTimeout(
+      () => {
+        deleteFlight(callsign)
+        clearTimeout(timer)
+      },
+      immediate ? 0 : random1To4 * 1000
+    )
   }
 
   if (!data) return null
-  if (data.type === 'arrival')
-    return (
-      <ArrivalStrip data={data} location={location} handleRemoveFlight={removeFlight} />
-    )
+
+  if (data.type === 'arrival') return <ArrivalStrip data={data} location={location} />
 
   return (
     <DepartureStrip data={data} location={location} handleRemoveFlight={removeFlight} />

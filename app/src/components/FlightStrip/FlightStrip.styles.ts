@@ -1,11 +1,16 @@
-import { Colors, PanelCSS } from '@/constants/styles'
-import styled from 'styled-components'
+import { Colors, PanelCSS, flashingColor } from '@/constants/styles'
+import styled, { css } from 'styled-components'
 
-export const Panel = styled.div<{ $color?: string }>`
+export const Panel = styled.div<{ $color?: string; $flashing?: boolean }>`
   ${PanelCSS}
   background-color: ${(props) => props.$color || Colors.lightGrey};
   width: 100%;
   position: relative;
+  ${(props) => props.$flashing && flashingAnimation}
+`
+
+const flashingAnimation = css<{ $flashing?: boolean }>`
+  animation: ${flashingColor} 1s infinite;
 `
 
 export const Content = styled.div<{ $color: string }>`
@@ -24,6 +29,8 @@ export const Value = styled(Panel)`
   text-align: center;
   justify-content: center;
   padding: 3px 2px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `
 
 export const TransferOverlay = styled.div`
@@ -34,4 +41,10 @@ export const TransferOverlay = styled.div`
   width: 100%;
   background-color: #ffffff88;
   pointer-events: none;
+`
+
+export const StripContainer = styled(Panel)`
+  display: flex;
+  height: 50px;
+  overflow: hidden;
 `

@@ -9,10 +9,6 @@ flightsRouter.get(
   '/',
   async (req: Request, res: Response<MyResponse<FlightData[]> | string>) => {
     try {
-      console.log('')
-      console.log('GET /api/flights')
-      console.log('req.headers', req.headers)
-      console.log('')
       const flights = flightState.getFlights()
       if (req.headers['accept'] === 'text/csv') {
         return new ObjectsToCsv(

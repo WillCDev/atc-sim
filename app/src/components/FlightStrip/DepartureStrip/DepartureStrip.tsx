@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Colors } from '@/constants/styles'
 import { CallSign } from '../CallSign'
 import { useFlightStore, useSimStore } from '@/store'
-import { Content, Panel, TransferOverlay, Value } from '../FlightStrip.styles'
+import { Content, StripContainer, TransferOverlay, Value } from '../FlightStrip.styles'
 import { FlightStripData, FlightStripLocation } from '@/types'
 import { useADepartureStripControlRules } from './useDepartureStripControlRules'
 import { CoordinatorButtons } from '../CoordinatorButtons'
@@ -11,7 +11,7 @@ import { CoordinatorButtons } from '../CoordinatorButtons'
 interface Props {
   data: FlightStripData
   location: FlightStripLocation
-  handleRemoveFlight: (callsign: string) => void
+  handleRemoveFlight: (callsign: string, immediate?: true) => void
 }
 
 export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }) => {
@@ -20,19 +20,25 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
   const { canBeTranfered, canTimeStamp, canBeClearedForDeparture, canBeSelected } =
     useADepartureStripControlRules(data, location)
 
-  const transerStrip = useFlightStore((state) => state.transferFlightStrip)
+  const transferStrip = useFlightStore((state) => state.transferFlightStrip)
   const timeStampStrip = useFlightStore((state) => state.timeStampStrip)
+  const moveFlightStrip = useFlightStore((state) => state.moveFlightStrip)
+  const selectStripToMove = useFlightStore((state) => state.setSelectedFlightStrip)
   const selectHoldingPoint = useFlightStore((state) => state.setStripToSelectHoldingPoint)
   const clearForDeparture = useFlightStore((state) => state.clearStripForDeparture)
 
+  const isAirborne = [FlightStripLocation.AIRBORNE_DEPS].includes(location)
+
   const handleTransfer = () => {
     if (!canBeTranfered) return
-    transerStrip(data.callsign)
+    transferStrip(data.callsign, true)
   }
 
   const handleTimeStamp = () => {
     if (!canTimeStamp) return
+    selectStripToMove({ ...data, location })
     timeStampStrip(data.callsign)
+    moveFlightStrip({ location: FlightStripLocation.AIRBORNE_DEPS })
   }
 
   const handleClearForDeparture = () => {
@@ -41,17 +47,38 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
   }
 
   const onSelectHoldingPoint = () => {
+    if (isAirborne) return
     selectHoldingPoint(data.callsign)
   }
 
+  const handleSidClick = () => {
+    if (isDualRunway) return handleTransfer()
+    if (!data.isTransfered) return handleTimeStamp()
+    if (data.isTransfered) return handleRemoveFlight(data.callsign, true)
+  }
+
+  const handleQsyClick = () => {
+    if (isDualRunway) return
+    if (!data.isTransfered) return handleTransfer()
+    handleRemoveFlight(data.callsign)
+  }
+
   useEffect(() => {
-    if (data.isTransfered) handleRemoveFlight(data.callsign)
-  }, [data.isTransfered])
+    if (data.isTransfered) transferStrip(data.callsign, false)
+  }, [location])
+
+  const highlightClearedFOrDeparture =
+    data.isClearedForDeparture && location === FlightStripLocation.RUNWAY_1
 
   return (
-    <Container>
+    <StripContainer>
       <ContentGrid $color={Colors.blue}>
-        <Value style={{ gridArea: '1 / 1 / 3 / 2' }}>{data.departureTime}</Value>
+        <Value
+          style={{ gridArea: '1 / 1 / 3 / 2' }}
+          $color={highlightClearedFOrDeparture ? Colors.green : undefined}
+        >
+          {data.departureTime}
+        </Value>
 
         <CallSign
           style={{ gridArea: '1 / 2 / 3 / 3', padding: '0 5px' }}
@@ -63,16 +90,27 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
         <Value style={{ gridArea: '1 / 3 / 2 / 4' }}>{data.classification}</Value>
         <div style={{ display: 'flex', gridArea: '2 / 3 / 3 / 4' }}>
           <Value style={{ flexGrow: 1 }}>{data.squawk ?? ''}</Value>
-          <Value style={{ flexGrow: 1, textAlign: 'center' }}>I</Value>
+          <Value style={{ flexGrow: 0, textAlign: 'center' }}>I</Value>
+          {!isAirborne && (
+            <Value style={{ flexGrow: 0, textAlign: 'center' }} $color={Colors.green}>
+              A
+            </Value>
+          )}
         </div>
 
         <Value style={{ gridArea: '1 / 4 / 2 / 5' }} />
         <div style={{ display: 'flex', gridArea: '2 / 4 / 3 / 5' }}>
           <Value
-            style={{ flexGrow: 1, textAlign: 'center', cursor: 'pointer' }}
+            style={{
+              flexGrow: 0,
+              textAlign: 'center',
+              flexBasis: '40%',
+              cursor: isAirborne ? 'initial' : 'pointer',
+            }}
+            $color={isAirborne ? Colors.green : Colors.white}
             onClick={onSelectHoldingPoint}
           >
-            {data.holdingPoint}
+            {isAirborne ? 'A' : data.holdingPoint}
           </Value>
           <Value style={{ flexGrow: 1, textAlign: 'center' }}>{data.qnh}</Value>
         </div>
@@ -80,7 +118,7 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
         <Value style={{ gridArea: '1 / 5 / 2 / 6' }} />
         <Value
           style={{ gridArea: '2 / 5 / 3 / 6' }}
-          $color={data.isClearedForDeparture ? Colors.green : undefined}
+          $color={highlightClearedFOrDeparture ? Colors.green : undefined}
           onClick={handleClearForDeparture}
         >
           {data.destination}
@@ -91,7 +129,7 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
             gridArea: '1 / 6 / 3 / 7',
             cursor: canBeTranfered ? 'pointer' : 'initial',
           }}
-          onClick={!isDualRunway ? handleTransfer : undefined}
+          onClick={handleQsyClick}
         >
           QSY
         </Value>
@@ -101,23 +139,19 @@ export const DepartureStrip: FC<Props> = ({ data, location, handleRemoveFlight }
 
         <Value
           style={{ gridArea: '1 / 8 / 3 / 9' }}
-          $color={Colors.white}
-          onClick={isDualRunway ? handleTransfer : handleTimeStamp}
+          $color={highlightClearedFOrDeparture ? Colors.green : Colors.white}
+          onClick={handleSidClick}
         >
-          {data.sid}
+          {data.isTransfered ? 'HIDE' : data.sid}
         </Value>
       </ContentGrid>
-      {data.isTransfered && <TransferOverlay onClick={(e) => e.stopPropagation()} />}
+      {data.isTransfered && <TransferOverlay />}
       {location === FlightStripLocation.UNASSIGNED && <CoordinatorButtons data={data} />}
-    </Container>
+    </StripContainer>
   )
 }
 
 const ContentGrid = styled(Content)`
   grid-template-columns: 1.5fr 2.5fr 2fr 2fr 1fr 1fr 1fr 1.5fr;
   grid-template-rows: 1fr 1fr;
-`
-
-const Container = styled(Panel)`
-  display: flex;
 `

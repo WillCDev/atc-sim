@@ -18,9 +18,10 @@ const getCanBeTimeStamped = (
   isDualRunway: boolean
 ) => {
   if (data.isTransfered) return false
+  if (isDualRunway) return false
   if (data.departureTime !== null) return false
   if (!data.isClearedForDeparture) return false
-  if (location === FlightStripLocation.RUNWAY_1 && !isDualRunway) return true
+  if (location === FlightStripLocation.RUNWAY_1) return true
   return false
 }
 
@@ -35,7 +36,6 @@ const getCanBeClearedForDeparture = (
 }
 
 const getCanBeSelected = (data: FlightStripData, location: FlightStripLocation) => {
-  if (data.isTransfered) return false
   if (location === FlightStripLocation.UNASSIGNED) return false
   return true
 }

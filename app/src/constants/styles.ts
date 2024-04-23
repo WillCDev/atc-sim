@@ -35,3 +35,9 @@ export const fadeIn = keyframes`
     0% { opacity: 0 }
     100% { opacity: 1 }
 `
+
+export const flashingColor = keyframes`
+  0% { background-color: 'initial' }
+  50% { background-color: ${Colors.lightGrey} }
+  100% { background-color: 'initial' }
+`

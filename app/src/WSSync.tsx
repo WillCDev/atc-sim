@@ -10,6 +10,13 @@ export const WsSync: FC = () => {
   const removeFlight = useFlightStore((state) => state.removeFlight)
   const removePendingFlight = useFlightStore((state) => state.removePendingFlight)
   const resetStore = useFlightStore((state) => state.reset)
+  const setIsConnected = useSimStore((state) => state.setConnected)
+
+  useEffect(() => {
+    if (!WSServer.isInitalized()) {
+      WSServer.init()
+    }
+  }, [])
 
   useEffect(() => {
     WSServer.onSimChange(setSimData)
@@ -28,6 +35,8 @@ export const WsSync: FC = () => {
       flights.forEach(upsertPendingFlight)
     }
     WSServer.onPendingFlightBatch(handlePendingFlightBatch)
+    WSServer.onConnected(setIsConnected)
+    WSServer.onDisconnected(setIsConnected)
 
     return () => {
       WSServer.unregisterSimChange(setSimData)
@@ -38,6 +47,8 @@ export const WsSync: FC = () => {
       WSServer.unregisterFlightBatch(handleFlightBatch)
       WSServer.unregisterPendingFlightBatch(handlePendingFlightBatch)
       WSServer.unregisterReset(resetStore)
+      WSServer.unregisterConnected(setIsConnected)
+      WSServer.unregisterDisconnected(setIsConnected)
     }
   }, [])
 

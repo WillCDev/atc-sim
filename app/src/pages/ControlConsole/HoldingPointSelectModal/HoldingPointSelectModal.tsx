@@ -67,9 +67,10 @@ const Modal = styled.div`
   justify-content: center;
   align-items: center;
   pointer-events: none;
+  z-index: 1;
 `
 
-const multiplier = 0.9
+const multiplier = 1.15
 const height = 587 * multiplier
 const width = 927 * multiplier
 
@@ -81,4 +82,5 @@ const ModalContent = styled.div`
   pointer-events: all;
   background-image: url('images/holdingpoint-select.jpeg');
   background-size: contain;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 `

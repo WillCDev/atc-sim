@@ -8,11 +8,13 @@ export interface SimState {
   qnh: number
   selectedRole: 'controller' | 'coordinator' | null
   started: boolean
+  connected: boolean
 }
 
 interface SimActions {
   setSimData: (data: Partial<SimState>) => void
   setSelectedRole: (selectedRole: SimState['selectedRole']) => void
+  setConnected: (connected: boolean) => void
 }
 
 const computedState = (state: SimState & SimActions) => ({
@@ -28,8 +30,10 @@ export const useSimStore = create<SimState & SimActions>()(
       qnh: 1014,
       selectedRole: null,
       started: false,
+      connected: false,
       setSimData: (data) => set((state) => ({ ...state, ...data })),
       setSelectedRole: (selectedRole: SimState['selectedRole']) => set({ selectedRole }),
+      setConnected: (connected) => set({ connected }),
     }),
     computedState
   )
