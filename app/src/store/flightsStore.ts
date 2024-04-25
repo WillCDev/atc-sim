@@ -11,6 +11,7 @@ interface Identifier {
 interface FlightsState {
   flights: Record<string, FlightStripData>
   pendingFlights: Record<string, FlightStripData>
+  lastDeletedFlight: null | { data: FlightStripData; location: FlightStripLocation }
   reset: () => void
   flightLocations: Record<FlightStripLocation, string[]>
   removeFlight: (callsign: string) => void
@@ -36,6 +37,7 @@ const getDefaultState = () =>
   ({
     flights: {},
     pendingFlights: {},
+    lastDeletedFlight: null,
     flightLocations: <Record<FlightStripLocation, string[]>>{
       [FlightStripLocation.PENDING_ARRIVALS]: [],
       [FlightStripLocation.AIRBORNE_DEPS]: [],
@@ -59,10 +61,15 @@ export const useFlightStore = create<FlightsState>((set) => ({
       if (!existingFlight) {
         state.flights[flight.callsign] = flight
 
-        const location =
+        let location =
           flight.type === 'arrival'
             ? FlightStripLocation.PENDING_ARRIVALS
             : FlightStripLocation.HOLD_N
+
+        if (flight.callsign === state.lastDeletedFlight?.data.callsign) {
+          location = state.lastDeletedFlight.location
+          state.lastDeletedFlight = null
+        }
 
         const list = state.flightLocations[location]
         state.flightLocations[location] = [...list, flight.callsign]
@@ -79,15 +86,18 @@ export const useFlightStore = create<FlightsState>((set) => ({
 
       delete state.flights[strip.callsign]
 
+      let stripLocation: FlightStripLocation = FlightStripLocation.UNASSIGNED
+
       Object.entries(state.flightLocations).forEach(([location, callsigns]) => {
         const stripIndex = callsigns.indexOf(strip.callsign)
         if (stripIndex !== -1) {
+          stripLocation = location as FlightStripLocation
           state.flightLocations[location as FlightStripLocation] = state.flightLocations[
             location as FlightStripLocation
           ].filter((cs) => cs !== callsign)
         }
       })
-      return { ...state }
+      return { ...state, lastDeletedFlight: { data: strip, location: stripLocation } }
     })
   },
   upsertPendingFlight: (flight) => {
