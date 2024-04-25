@@ -50,8 +50,8 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
   }
 
   const handleSidClick = () => {
-    if (!data.isTransfered) return handleTimeStamp()
-    if (data.isTransfered) return deleteFlight(data.callsign)
+    if (location === FlightStripLocation.AIRBORNE_DEPS) return deleteFlight(data.callsign)
+    return handleTimeStamp()
   }
 
   const handleQsyClick = () => {
