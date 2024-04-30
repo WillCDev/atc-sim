@@ -124,7 +124,7 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
           {data.destination}
         </Value>
 
-        {location !== FlightStripLocation.AIRBORNE_DEPS && (
+        {location !== FlightStripLocation.HOLD_S && (
           <Value
             style={{
               gridArea: '1 / 6 / 3 / 7',
