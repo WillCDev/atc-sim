@@ -124,15 +124,17 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
           {data.destination}
         </Value>
 
-        <Value
-          style={{
-            gridArea: '1 / 6 / 3 / 7',
-            cursor: canBeTransfered ? 'pointer' : 'initial',
-          }}
-          onClick={handleQsyClick}
-        >
-          QSY
-        </Value>
+        {location !== FlightStripLocation.AIRBORNE_DEPS && (
+          <Value
+            style={{
+              gridArea: '1 / 6 / 3 / 7',
+              cursor: canBeTransfered ? 'pointer' : 'initial',
+            }}
+            onClick={handleQsyClick}
+          >
+            QSY
+          </Value>
+        )}
 
         <Value style={{ gridArea: '1 / 7 / 2 / 8' }}>HDG</Value>
         <Value style={{ gridArea: '2 / 7 / 3 / 8' }}>CLD</Value>

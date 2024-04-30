@@ -45,6 +45,6 @@ export const TransferOverlay = styled.div`
 
 export const StripContainer = styled(Panel)`
   display: flex;
-  height: 50px;
+  height: 52px;
   overflow: hidden;
 `
