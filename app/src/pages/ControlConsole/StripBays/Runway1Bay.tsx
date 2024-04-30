@@ -8,11 +8,7 @@ export const Runway1Bay: FC = () => {
   const strips = useFlightStore((state) => state.flightLocations.RUNWAY_1)
 
   return (
-    <StripBay
-      allowedStripTypes={['arrival', 'departure']}
-      strips={strips}
-      location={FlightStripLocation.RUNWAY_1}
-    >
+    <StripBay strips={strips} location={FlightStripLocation.RUNWAY_1}>
       <InfoStrip
         items={[
           { value: 'RUNWAY 1', basis: '100px', align: 'left' },

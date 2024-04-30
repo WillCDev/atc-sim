@@ -35,9 +35,19 @@ const getCanBeClearedForDeparture = (
   return false
 }
 
-const getCanBeSelected = (data: FlightStripData, location: FlightStripLocation) => {
+const getCanBeSelected = (location: FlightStripLocation) => {
   if (location === FlightStripLocation.UNASSIGNED) return false
   return true
+}
+
+const getCanBeDeleted = (
+  data: FlightStripData,
+  location: FlightStripLocation,
+  isDualRunway: boolean
+) => {
+  if (location === FlightStripLocation.AIRBORNE_DEPS) return true
+  if (isDualRunway && location === FlightStripLocation.HOLD_S) return true
+  return false
 }
 
 export const useADepartureStripControlRules = (
@@ -47,9 +57,10 @@ export const useADepartureStripControlRules = (
   const isDualRunway = useSimStore((state) => state.isDualRunway)
 
   return {
-    canBeSelected: getCanBeSelected(data, location),
-    canBeTranfered: getCanbeTransfered(data, location, isDualRunway),
+    canBeSelected: getCanBeSelected(location),
+    canBeTransfered: getCanbeTransfered(data, location, isDualRunway),
     canTimeStamp: getCanBeTimeStamped(data, location, isDualRunway),
     canBeClearedForDeparture: getCanBeClearedForDeparture(data, location, isDualRunway),
+    canBeDeleted: getCanBeDeleted(data, location, isDualRunway),
   }
 }

@@ -8,11 +8,7 @@ export const ArrivalSeqBay: FC = () => {
   const strips = useFlightStore((state) => state.flightLocations.ARRIVAL_SEQ)
 
   return (
-    <StripBay
-      allowedStripTypes={['arrival']}
-      strips={strips}
-      location={FlightStripLocation.ARRIVAL_SEQ}
-    >
+    <StripBay strips={strips} location={FlightStripLocation.ARRIVAL_SEQ}>
       <InfoStrip
         items={[
           { value: 'ARR SEQUENCE', width: '150px' },

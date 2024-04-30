@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { FlightStripData, FlightStripLocation } from '@/types'
-import { move } from 'move-position'
+import { arrayMoveImmutable } from 'array-move'
 import { format } from 'date-fns'
 
 interface Identifier {
@@ -228,9 +228,10 @@ const moveFlightStrip = (
   if (source.location === dest.location) {
     if (dest.index === undefined) return newState
 
-    newState.flightLocations[dest.location] = move(
+    newState.flightLocations[dest.location] = arrayMoveImmutable(
       newState.flightLocations[dest.location],
-      [{ from: source.index, to: dest.index }]
+      source.index,
+      dest.index
     )
   } else {
     if (dest.index === undefined) {

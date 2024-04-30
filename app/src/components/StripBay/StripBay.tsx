@@ -1,28 +1,24 @@
 import { FC } from 'react'
 import { FlightStrip } from '@/components/FlightStrip'
 import styled from 'styled-components'
-import { useFlightStore } from '@/store'
-import { FlightStripData, FlightStripLocation } from '@/types'
+import { useFlightStore, useSimStore } from '@/store'
+import { FlightStripLocation } from '@/types'
+import { isStripAllowedInBay } from './AllowedFlightTypeMappings'
 
 export interface StripBayProps {
   strips: string[]
-  allowedStripTypes: Array<FlightStripData['type']>
   location: FlightStripLocation
   children: React.ReactNode
 }
 
-export const StripBay: FC<StripBayProps> = ({
-  children,
-  strips,
-  allowedStripTypes,
-  location,
-}) => {
+export const StripBay: FC<StripBayProps> = ({ children, strips, location }) => {
+  const isDualRunway = useSimStore((state) => state.isDualRunway)
   const selectedStrip = useFlightStore((state) => state.selectedFlightStrip)
   const moveFlightStrip = useFlightStore((state) => state.moveFlightStrip)
   const timeStampStrip = useFlightStore((state) => state.timeStampStrip)
 
   const canReceiveStrip =
-    !!selectedStrip && allowedStripTypes.includes(selectedStrip.type)
+    !!selectedStrip && isStripAllowedInBay(selectedStrip.type, location, isDualRunway)
 
   const addTimeStamp =
     !!selectedStrip &&

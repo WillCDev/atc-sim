@@ -15,8 +15,13 @@ interface Props {
 }
 
 export const DepartureStrip: FC<Props> = ({ data, location }) => {
-  const { canBeTranfered, canTimeStamp, canBeClearedForDeparture, canBeSelected } =
-    useADepartureStripControlRules(data, location)
+  const {
+    canBeTransfered,
+    canTimeStamp,
+    canBeClearedForDeparture,
+    canBeSelected,
+    canBeDeleted,
+  } = useADepartureStripControlRules(data, location)
 
   const transferStrip = useFlightStore((state) => state.transferFlightStrip)
   const timeStampStrip = useFlightStore((state) => state.timeStampStrip)
@@ -28,7 +33,7 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
   const isAirborne = [FlightStripLocation.AIRBORNE_DEPS].includes(location)
 
   const handleTransfer = () => {
-    if (!canBeTranfered) return
+    if (!canBeTransfered) return
     transferStrip(data.callsign, true)
   }
 
@@ -50,7 +55,7 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
   }
 
   const handleSidClick = () => {
-    if (location === FlightStripLocation.AIRBORNE_DEPS) return deleteFlight(data.callsign)
+    if (canBeDeleted) return deleteFlight(data.callsign)
     return handleTimeStamp()
   }
 
@@ -122,7 +127,7 @@ export const DepartureStrip: FC<Props> = ({ data, location }) => {
         <Value
           style={{
             gridArea: '1 / 6 / 3 / 7',
-            cursor: canBeTranfered ? 'pointer' : 'initial',
+            cursor: canBeTransfered ? 'pointer' : 'initial',
           }}
           onClick={handleQsyClick}
         >

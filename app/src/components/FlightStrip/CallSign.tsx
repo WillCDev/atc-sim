@@ -1,8 +1,9 @@
 import { CSSProperties, FC } from 'react'
 import { DisplayItem } from '../ItemDisplay'
 import { Colors } from '@/constants/styles'
-import { useFlightStore } from '@/store'
+import { useFlightStore, useSimStore } from '@/store'
 import { FlightStripData, FlightStripLocation } from '@/types'
+import { isStripAllowedInBay } from '../StripBay'
 
 interface Props {
   style?: CSSProperties
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const CallSign: FC<Props> = ({ style, data, location, disabled }) => {
+  const isDualRunway = useSimStore((state) => state.isDualRunway)
   const selectedStrip = useFlightStore((state) => state.selectedFlightStrip)
   const selectCallSign = useFlightStore((state) => state.setSelectedFlightStrip)
   const moveFlightstrip = useFlightStore((state) => state.moveFlightStrip)
@@ -20,7 +22,6 @@ export const CallSign: FC<Props> = ({ style, data, location, disabled }) => {
   const isSelected = selectedCallsign === data.callsign
 
   const handleClick = () => {
-    console.log('CallSign handleClick', data.callsign, location, selectedCallsign)
     if (disabled) return
     if (!selectedCallsign) {
       return selectCallSign({ ...data, location })
@@ -28,8 +29,9 @@ export const CallSign: FC<Props> = ({ style, data, location, disabled }) => {
     if (selectedCallsign === data.callsign) {
       return selectCallSign(null)
     }
-
-    moveFlightstrip({ callsign: data.callsign, location })
+    if (isStripAllowedInBay(selectedStrip.type, location, isDualRunway)) {
+      moveFlightstrip({ callsign: data.callsign, location })
+    }
   }
 
   return (

@@ -8,11 +8,7 @@ export const PendingArrivalsBay: FC = () => {
   const strips = useFlightStore((state) => state.flightLocations.PENDING_ARRIVALS)
 
   return (
-    <StripBay
-      strips={strips}
-      allowedStripTypes={['arrival']}
-      location={FlightStripLocation.PENDING_ARRIVALS}
-    >
+    <StripBay strips={strips} location={FlightStripLocation.PENDING_ARRIVALS}>
       <InfoStrip
         items={[
           { value: 'PEND ARR', width: '80px' },
