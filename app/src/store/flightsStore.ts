@@ -226,12 +226,10 @@ const moveFlightStrip = (
   const newState = JSON.parse(JSON.stringify(state))
 
   if (source.location === dest.location) {
-    if (dest.index === undefined) return newState
-
     newState.flightLocations[dest.location] = arrayMoveImmutable(
       newState.flightLocations[dest.location],
       source.index,
-      dest.index
+      dest.index ?? newState.flightLocations[dest.location].length - 1
     )
   } else {
     if (dest.index === undefined) {
