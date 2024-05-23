@@ -1,9 +1,9 @@
 const startingpoints = [
   'H1',
+  'H1',
   'F1',
   'F1',
   'F1',
-  'P1',
   'P1',
   'P1',
   'P1',
