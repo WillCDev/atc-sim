@@ -14,7 +14,7 @@ import { createPendingFlight } from '@/api/flights'
 const defaultItemProps = { width: '220px', height: '30px', fontSize: '1rem' } as const
 
 export const FlightManager: FC = () => {
-  const { arrivalRunway, departureRunway, qnh } = useSimStore()
+  const { arrivalRunway, departureRunway, qnh, simType } = useSimStore()
   const flights = useFlightStore((state) => Object.values(state.flights))
   const pendingFlights = useFlightStore((state) => Object.values(state.pendingFlights))
 
@@ -38,27 +38,37 @@ export const FlightManager: FC = () => {
         <StripBay
           strips={pendingFlights.map((flight) => flight.callsign)}
           location={FlightStripLocation.UNASSIGNED}
-          allowedStripTypes={['arrival', 'departure']}
         >
           <InfoStrip
-            items={[
-              {
-                value: isDualRunway ? 'Dual Runway' : 'Single Runway',
-                ...defaultItemProps,
-              },
-              {
-                value: `${arrivals.length} Arrivals in SIM`,
-                ...defaultItemProps,
-              },
-              {
-                value: `${departures.length} Departures in SIM`,
-                ...defaultItemProps,
-              },
-              {
-                value: `${pendingFlights.length} Pending Flights`,
-                ...defaultItemProps,
-              },
-            ]}
+            items={
+              simType === 'tower'
+                ? [
+                    {
+                      value: `${isDualRunway ? 'Dual Runway' : 'Single Runway'}`,
+                      ...defaultItemProps,
+                    },
+                    {
+                      value: `${arrivals.length} Arrivals in SIM`,
+                      ...defaultItemProps,
+                    },
+                    {
+                      value: `${departures.length} Departures in SIM`,
+                      ...defaultItemProps,
+                    },
+                    {
+                      value: `${pendingFlights.length} Pending Flights`,
+                      ...defaultItemProps,
+                    },
+                  ]
+                : [
+                    { value: 'Radar', ...defaultItemProps },
+                    { value: `${arrivals.length} Flights in SIM`, ...defaultItemProps },
+                    {
+                      value: `${pendingFlights.length} Pending Flights`,
+                      ...defaultItemProps,
+                    },
+                  ]
+            }
             buttons={[
               {
                 value: 'End Sim',
@@ -68,13 +78,15 @@ export const FlightManager: FC = () => {
               },
             ]}
           />
-          <div>
+          <div style={{ display: 'flex' }}>
             <GenerateButton $size="md" onClick={generateArrival}>
               Generate Arrival
             </GenerateButton>
-            <GenerateButton $size="md" onClick={generateDeparture}>
-              Generate Departure
-            </GenerateButton>
+            {simType === 'tower' && (
+              <GenerateButton $size="md" onClick={generateDeparture}>
+                Generate Departure
+              </GenerateButton>
+            )}
           </div>
         </StripBay>
       </Wrapper>
@@ -92,5 +104,6 @@ const Wrapper = styled.div`
 `
 
 const GenerateButton = styled(Button)`
-  width: 50%;
+  flex: 1;
+  flex-basis: 100%;
 `

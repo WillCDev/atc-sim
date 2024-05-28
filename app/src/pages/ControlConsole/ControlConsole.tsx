@@ -1,7 +1,7 @@
 import { useSimStore } from '@/store'
-import { CenteredContent } from '@/components/CenteredContent'
 import { TowerControlConsole } from './TowerControlConsole'
 import { LoadingPage } from '../LoadingPage'
+import { RadarControlConsole } from './RadarControlConsole'
 
 export const ControlConsole = () => {
   const isSimulatorRunning = useSimStore((state) => state.started)
@@ -15,5 +15,5 @@ export const ControlConsole = () => {
     return <TowerControlConsole />
   }
 
-  return <CenteredContent>Radar Sim not yet implements</CenteredContent>
+  return <RadarControlConsole />
 }

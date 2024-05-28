@@ -12,6 +12,9 @@ export enum FlightStripLocation {
   R1_LOOP = 'R1_LOOP',
   HOLD_S = 'HOLD_S',
   HOLD_N = 'HOLD_N',
+  TRANSFER_IN = 'TRANSFER_IN',
+  DYNAMIC = 'DYNAMIC',
+  AIR_CONTROLLER = 'AIR_CONTROLLER',
   UNASSIGNED = 'UNASSIGNED',
 }
 

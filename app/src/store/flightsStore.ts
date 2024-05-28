@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { FlightStripData, FlightStripLocation } from '@/types'
 import { arrayMoveImmutable } from 'array-move'
 import { format } from 'date-fns'
+import { useSimStore } from './simStore'
 
 interface Identifier {
   callsign: string
@@ -46,6 +47,9 @@ const getDefaultState = () =>
       [FlightStripLocation.R1_LOOP]: [],
       [FlightStripLocation.HOLD_S]: [],
       [FlightStripLocation.HOLD_N]: [],
+      [FlightStripLocation.DYNAMIC]: [],
+      [FlightStripLocation.AIR_CONTROLLER]: [],
+      [FlightStripLocation.TRANSFER_IN]: [],
       [FlightStripLocation.UNASSIGNED]: [],
     },
   } as const)
@@ -57,12 +61,15 @@ export const useFlightStore = create<FlightsState>((set) => ({
   },
   upsertFlight: (flight: FlightStripData) => {
     set((state) => {
+      const simType = useSimStore.getState().simType
       const existingFlight = state.flights[flight.callsign]
       if (!existingFlight) {
         state.flights[flight.callsign] = flight
 
         let location =
-          flight.type === 'arrival'
+          simType === 'radar'
+            ? FlightStripLocation.TRANSFER_IN
+            : flight.type === 'arrival'
             ? FlightStripLocation.PENDING_ARRIVALS
             : FlightStripLocation.HOLD_N
 

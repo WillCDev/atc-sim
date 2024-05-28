@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { CenteredContent } from '@/components/CenteredContent'
-import { postSimData } from '@/api/sim'
 import { Button } from '@/components/Button'
-import { useSimStore } from '@/store'
+import { SimState, useSimStore } from '@/store'
+import { postSimData } from '@/api/sim'
 
 interface Props {
   onSimStart: () => void
@@ -11,11 +11,11 @@ interface Props {
 export const SimSetup: FC<Props> = ({ onSimStart }) => {
   const applySimData = useSimStore((state) => state.setSimData)
 
-  const setSimData = (dualRunway?: boolean) => {
+  const setSimData = (
+    args: Pick<SimState, 'simType' | 'arrivalRunway' | 'departureRunway'>
+  ) => {
     const simData = {
-      simType: 'tower',
-      arrivalRunway: '23R',
-      departureRunway: dualRunway ? '23L' : '23R',
+      ...args,
       qnh: 1014,
       started: true,
     } as const
@@ -28,11 +28,29 @@ export const SimSetup: FC<Props> = ({ onSimStart }) => {
   return (
     <CenteredContent>
       <div style={{ display: 'flex', gap: '12px' }}>
-        <Button $size="md" onClick={() => setSimData()}>
-          Single Runway
+        <Button
+          $size="md"
+          onClick={() =>
+            setSimData({ simType: 'tower', arrivalRunway: '23R', departureRunway: '23R' })
+          }
+        >
+          Tower: Single Runway
         </Button>
-        <Button $size="md" onClick={() => setSimData(true)}>
-          Dual Runway
+        <Button
+          $size="md"
+          onClick={() =>
+            setSimData({ simType: 'tower', arrivalRunway: '23R', departureRunway: '23L' })
+          }
+        >
+          Tower: Dual Runway
+        </Button>
+        <Button
+          $size="md"
+          onClick={() =>
+            setSimData({ simType: 'radar', arrivalRunway: null, departureRunway: null })
+          }
+        >
+          Radar
         </Button>
       </div>
     </CenteredContent>
