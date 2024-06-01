@@ -2,6 +2,7 @@ interface FlightStripControlProps {
   isTransfered: boolean // False by default, greyed out once transfered
   isClearedForDeparture: boolean // False by default, green once cleared
   canContinueApproach: boolean // False by default, C once cleared
+  isClearedForApproach: boolean // False by default, green once cleared
 }
 
 export enum FlightStripLocation {
@@ -30,4 +31,7 @@ export interface FlightStripData extends FlightStripControlProps {
   destination: string | null // 'OMAA' Set at begining of SIM
   origin: string | null // 'OEJN' Set at Begining of SIM
   sid: string | null
+  heading: string | null // Defaults to HDG
+  speed: string | null // Defaults to SPD
+  altitude: string | null // Defaults to CLD
 }

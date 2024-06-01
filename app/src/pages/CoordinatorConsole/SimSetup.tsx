@@ -47,7 +47,7 @@ export const SimSetup: FC<Props> = ({ onSimStart }) => {
         <Button
           $size="md"
           onClick={() =>
-            setSimData({ simType: 'radar', arrivalRunway: null, departureRunway: null })
+            setSimData({ simType: 'radar', arrivalRunway: '23R', departureRunway: null })
           }
         >
           Radar

@@ -36,6 +36,18 @@ const allowedStripBayFlightTypeMappings: Record<
     single: ['arrival', 'departure'],
     dual: ['arrival', 'departure'],
   },
+  [FlightStripLocation.TRANSFER_IN]: {
+    single: ['arrival'],
+    dual: ['arrival'],
+  },
+  [FlightStripLocation.DYNAMIC]: {
+    single: ['arrival'],
+    dual: ['arrival'],
+  },
+  [FlightStripLocation.AIR_CONTROLLER]: {
+    single: ['arrival'],
+    dual: ['arrival'],
+  },
 }
 
 export const isStripAllowedInBay = (

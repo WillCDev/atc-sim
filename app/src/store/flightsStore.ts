@@ -31,7 +31,11 @@ interface FlightsState {
   setStripToSelectHoldingPoint: (callsign: string | null) => void
   assignHoldingPointToStrip: (holdingPoint: string) => void
   clearStripForDeparture: (callsign: string) => void
+  clearStripForApproach: (callsign: string) => void
   removeStrip: (arg: Identifier) => void
+  setFlightSpeed: (callsign: string, speed: string | null) => void
+  setHeading: (callsign: string, speed: string | null) => void
+  setAltitude: (callsign: string, speed: string | null) => void
 }
 
 const getDefaultState = () =>
@@ -217,6 +221,42 @@ export const useFlightStore = create<FlightsState>((set) => ({
         stripIndex,
         1
       )
+      return { ...state }
+    })
+  },
+  setFlightSpeed: (callsign, speed) => {
+    set((state) => {
+      const strip = state.flights[callsign]
+      if (!strip) return state
+
+      state.flights[strip.callsign] = { ...strip, speed }
+      return { ...state }
+    })
+  },
+  setHeading: (callsign, heading) => {
+    set((state) => {
+      const strip = state.flights[callsign]
+      if (!strip) return state
+
+      state.flights[strip.callsign] = { ...strip, heading }
+      return { ...state }
+    })
+  },
+  setAltitude: (callsign, altitude) => {
+    set((state) => {
+      const strip = state.flights[callsign]
+      if (!strip) return state
+
+      state.flights[strip.callsign] = { ...strip, altitude }
+      return { ...state }
+    })
+  },
+  clearStripForApproach: (callsign) => {
+    set((state) => {
+      const strip = state.flights[callsign]
+      if (!strip) return state
+
+      state.flights[strip.callsign] = { ...strip, isClearedForApproach: true }
       return { ...state }
     })
   },

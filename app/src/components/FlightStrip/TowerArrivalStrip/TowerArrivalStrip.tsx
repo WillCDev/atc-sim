@@ -5,7 +5,7 @@ import { CallSign } from '../CallSign'
 import { useFlightStore, useSimStore } from '@/store'
 import { Content, StripContainer, TransferOverlay, Value } from '../FlightStrip.styles'
 import { FlightStripData, FlightStripLocation } from '@/types'
-import { useArrivalStripControlRules } from './useArrivalStripControlRules'
+import { useArrivalStripControlRules } from './useTowerArrivalStripControlRules'
 import { CoordinatorButtons } from '../CoordinatorButtons'
 import { deleteFlight } from '@/api/flights'
 
@@ -14,7 +14,7 @@ interface Props {
   location: FlightStripLocation
 }
 
-export const ArrivalStrip: FC<Props> = ({ data, location }) => {
+export const TowerArrivalStrip: FC<Props> = ({ data, location }) => {
   const timeStampAlertRef = useRef<number | null>(null)
   const [showTimeStampAlert, setShowTimeStampAlert] = useState(false)
 

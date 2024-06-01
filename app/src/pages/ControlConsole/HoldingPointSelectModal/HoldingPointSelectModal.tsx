@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { useFlightStore } from '@/store'
 import styled from 'styled-components'
-import { PanelCSS } from '@/constants/styles'
-import { InfoStrip } from '@/components/InfoStrip'
+
+import { Modal } from '@/components/Modal'
+import { useFlightStore } from '@/store'
 import * as Points from './Points'
 
 export const HoldingPointSelectModal: FC = () => {
@@ -12,19 +12,8 @@ export const HoldingPointSelectModal: FC = () => {
   if (!selectedStrip) return null
 
   return (
-    <Modal>
-      <ModalContent>
-        <InfoStrip
-          items={[]}
-          buttons={[
-            {
-              value: 'X',
-              width: '100px',
-              color: 'red',
-              onClick: () => setSelectedStrip(null),
-            },
-          ]}
-        />
+    <Modal onClose={() => setSelectedStrip(null)}>
+      <Content>
         <Points.G1Point>G1</Points.G1Point>
         <Points.G2Point>G2</Points.G2Point>
         <Points.G3Point>G3</Points.G3Point>
@@ -51,36 +40,18 @@ export const HoldingPointSelectModal: FC = () => {
         <Points.FZ1Point>FZ1</Points.FZ1Point>
         <Points.HZ1Point>HZ1</Points.HZ1Point>
         <Points.DZ1Point>DZ1</Points.DZ1Point>
-      </ModalContent>
+      </Content>
     </Modal>
   )
 }
-
-const Modal = styled.div`
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  pointer-events: none;
-  z-index: 1;
-`
 
 const multiplier = 1.15
 const height = 587 * multiplier
 const width = 927 * multiplier
 
-const ModalContent = styled.div`
-  ${PanelCSS}
-  position: relative;
+const Content = styled.div`
   width: ${width}px;
   height: ${height}px;
-  pointer-events: all;
   background-image: url('images/holdingpoint-select.jpeg');
   background-size: contain;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 `

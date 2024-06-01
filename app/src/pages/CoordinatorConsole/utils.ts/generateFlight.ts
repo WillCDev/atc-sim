@@ -26,7 +26,11 @@ export const generateFlight = (
     qnh: String(qnh ?? 1014),
     destination: type === 'arrival' ? 'EGCC' : origin,
     sid: getRandomSid(),
+    heading: null,
+    speed: null,
+    altitude: null,
     isTransfered: false,
     isClearedForDeparture: false,
+    canContinueApproach: false,
   }
 }

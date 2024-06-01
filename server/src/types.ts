@@ -14,6 +14,10 @@ export const FlightDataSchema = z.object({
   sid: z.string().nullable(),
   isTransfered: z.boolean(),
   isClearedForDeparture: z.boolean(),
+  canContinueApproach: z.boolean(),
+  heading: z.string().nullable(),
+  speed: z.string().nullable(),
+  altitude: z.string().nullable(),
 })
 
 export type CreateFlightData = z.infer<typeof FlightDataSchema>
